@@ -1,5 +1,7 @@
-import { FUNDING_URLS } from "@ghom/content";
+import { FUNDING_URLS, legalUi } from "@ghom/content";
+import { localizePath } from "@ghom/core";
 import { getProjects } from "@ghom/db";
+import Link from "next/link";
 import { ArcadeShell } from "@/components/arcade/arcade-shell";
 import { GameSelect } from "@/components/sections/game-select";
 import { Hero } from "@/components/sections/hero";
@@ -51,6 +53,27 @@ export default async function StudioPage() {
           >
             {t.footer.support}
           </a>
+          {" · "}
+          <Link
+            href={localizePath(locale, "/legal-notice")}
+            className="hover:text-foreground hover:underline"
+          >
+            {legalUi[locale]["legal-notice"].toUpperCase()}
+          </Link>
+          {" · "}
+          <Link
+            href={localizePath(locale, "/terms")}
+            className="hover:text-foreground hover:underline"
+          >
+            {legalUi[locale].terms.toUpperCase()}
+          </Link>
+          {" · "}
+          <Link
+            href={localizePath(locale, "/privacy")}
+            className="hover:text-foreground hover:underline"
+          >
+            {legalUi[locale].privacy.toUpperCase()}
+          </Link>
         </footer>
       </main>
     </ArcadeShell>

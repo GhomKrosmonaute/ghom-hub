@@ -86,10 +86,80 @@ export function stripLocale(pathname: string): string {
   return `/${rest.join("/")}`;
 }
 
-/** Préfixe un chemin par la langue : ("en", "/x") → /en/x ; ("en", "/") → /en. */
+/**
+ * Segments d'URL traduits. Clé = dossier interne sous `app/[lang]` ; valeurs = slug
+ * public dans chaque langue (ex. dossier `terms` → /cgu en français, /en/terms en anglais).
+ */
+export const PAGE_SLUGS = {
+  "legal-notice": { fr: "mentions-legales", en: "legal-notice" },
+  terms: { fr: "cgu", en: "terms" },
+  privacy: { fr: "confidentialite", en: "privacy" },
+} as const satisfies Record<string, Localized<string>>;
+export type PageKey = keyof typeof PAGE_SLUGS;
+
+/** Dossier interne désigné par un premier segment (clé ou slug public de n'importe quelle langue). */
+function pageKeyOf(segment: string | undefined): PageKey | undefined {
+  if (!segment) return undefined;
+  return (Object.keys(PAGE_SLUGS) as PageKey[]).find(
+    (key) => key === segment || LOCALES.some((l) => PAGE_SLUGS[key][l] === segment),
+  );
+}
+
+/** Remplace le premier segment d'un chemin sans langue (/x/y) via `PAGE_SLUGS`. */
+function swapSlug(bare: string, to: (key: PageKey) => string): string {
+  const [, first, ...rest] = bare.split("/");
+  const key = pageKeyOf(first);
+  return key ? ["", to(key), ...rest].join("/") : bare;
+}
+
+/**
+ * Chemin public d'une page dans une langue. Le français (langue par défaut) n'a pas
+ * de préfixe : ("fr", "/x") → /x ; les autres en ont un : ("en", "/x") → /en/x.
+ * Les slugs traduits sont convertis : ("en", "/cgu") → /en/terms ; ("fr", "/terms") → /cgu.
+ */
 export function localizePath(locale: Locale, pathname = "/"): string {
-  const bare = stripLocale(pathname);
+  const bare = swapSlug(stripLocale(pathname), (key) => PAGE_SLUGS[key][locale]);
+  if (locale === DEFAULT_LOCALE) return bare;
   return bare === "/" ? `/${locale}` : `/${locale}${bare}`;
+}
+
+/** Chemin interne (dossier Next) d'un chemin public déjà localisé : /cgu → /terms. */
+function internalPath(bare: string): string {
+  return swapSlug(bare, (key) => key);
+}
+
+/** URL d'un autre site du hub dans la même langue (racine nue en français). */
+export function localizeSiteUrl(siteUrl: string, locale: Locale): string {
+  return siteUrl.replace(/\/$/, "") + (locale === DEFAULT_LOCALE ? "" : `/${locale}`);
+}
+
+export type LocaleRoute =
+  | { action: "next" }
+  | { action: "redirect"; pathname: string }
+  | { action: "rewrite"; pathname: string };
+
+/**
+ * Routage i18n "préfixe si besoin" (utilisé par les proxys Next) :
+ * - slug d'une autre langue (/en/cgu, /privacy en français) → redirection vers le bon ;
+ * - /fr/x  → redirection permanente vers /x (une seule URL par page) ;
+ * - /en/x  → servi tel quel ;
+ * - /x     → français : réécriture interne vers /fr/x (l'URL reste /x) ;
+ *            anglais (cookie ou navigateur) : redirection vers /en/x.
+ */
+export function routeLocale(
+  pathname: string,
+  cookie: string | null | undefined,
+  acceptLanguage: string | null | undefined,
+): LocaleRoute {
+  const first = pathname.split("/")[1];
+  const locale = isLocale(first) ? first : pickLocale(cookie, acceptLanguage);
+  // URL publique canonique (bonne langue, bon slug) : sinon, redirection.
+  const canonical = localizePath(locale, pathname);
+  if (canonical !== pathname) return { action: "redirect", pathname: canonical };
+  const inner = internalPath(stripLocale(pathname));
+  const internal = `/${locale}${inner === "/" ? "" : inner}`;
+  if (locale === DEFAULT_LOCALE) return { action: "rewrite", pathname: internal };
+  return internal === pathname ? { action: "next" } : { action: "rewrite", pathname: internal };
 }
 
 /**

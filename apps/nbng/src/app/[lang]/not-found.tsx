@@ -1,3 +1,4 @@
+import { localizePath } from "@ghom/core";
 import Link from "next/link";
 import { getDictionary, getLocale } from "@/i18n/server";
 
@@ -11,7 +12,7 @@ export default async function NotFound() {
           {t.notFound.title}
         </h1>
         <Link
-          href={`/${locale}`}
+          href={localizePath(locale)}
           className="pixel-font animate-[press-start_1s_steps(1)_infinite] text-sm text-foreground"
         >
           {t.notFound.continue}

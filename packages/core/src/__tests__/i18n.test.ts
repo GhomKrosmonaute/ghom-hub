@@ -6,9 +6,11 @@ import {
   LOCALES,
   localeCookie,
   localizePath,
+  localizeSiteUrl,
   negotiateLocale,
   otherLocale,
   pickLocale,
+  routeLocale,
   stripLocale,
 } from "../i18n";
 import { contactSchemaFor, subscribeSchemaFor } from "../validation";
@@ -49,8 +51,70 @@ describe("chemins localisés", () => {
     expect(stripLocale("/en")).toBe("/");
     expect(stripLocale("/foo")).toBe("/foo");
     expect(localizePath("en", "/")).toBe("/en");
-    expect(localizePath("fr", "/en/x")).toBe("/fr/x");
+    expect(localizePath("en", "/x")).toBe("/en/x");
     expect(localizePath("en")).toBe("/en");
+    // français = langue par défaut : pas de préfixe
+    expect(localizePath("fr", "/en/x")).toBe("/x");
+    expect(localizePath("fr", "/en")).toBe("/");
+    expect(localizePath("fr", "/")).toBe("/");
+  });
+
+  test("localizeSiteUrl : racine nue en français", () => {
+    expect(localizeSiteUrl("https://ghom.fr/", "fr")).toBe("https://ghom.fr");
+    expect(localizeSiteUrl("https://ghom.fr", "en")).toBe("https://ghom.fr/en");
+  });
+
+  test("routeLocale : français sans préfixe, anglais préfixé", () => {
+    // /fr n'existe plus en URL publique
+    expect(routeLocale("/fr", null, null)).toEqual({ action: "redirect", pathname: "/" });
+    expect(routeLocale("/fr/x", null, null)).toEqual({ action: "redirect", pathname: "/x" });
+    // /en servi tel quel
+    expect(routeLocale("/en", "fr", "fr")).toEqual({ action: "next" });
+    expect(routeLocale("/en/x", null, null)).toEqual({ action: "next" });
+    // racine : français réécrit (URL inchangée), anglais redirigé
+    expect(routeLocale("/", null, "fr-FR")).toEqual({ action: "rewrite", pathname: "/fr" });
+    expect(routeLocale("/", null, null)).toEqual({ action: "rewrite", pathname: "/fr" });
+    expect(routeLocale("/x", null, "en-US,en")).toEqual({ action: "redirect", pathname: "/en/x" });
+    // le choix explicite (cookie) prime sur le navigateur
+    expect(routeLocale("/", "fr", "en-US")).toEqual({ action: "rewrite", pathname: "/fr" });
+    expect(routeLocale("/", "en", "fr")).toEqual({ action: "redirect", pathname: "/en" });
+  });
+
+  test("slugs traduits : /cgu ↔ /en/terms, /confidentialite ↔ /en/privacy", () => {
+    expect(localizePath("fr", "/terms")).toBe("/cgu");
+    expect(localizePath("en", "/terms")).toBe("/en/terms");
+    expect(localizePath("en", "/cgu")).toBe("/en/terms");
+    expect(localizePath("fr", "/en/privacy")).toBe("/confidentialite");
+    expect(localizePath("en", "/confidentialite")).toBe("/en/privacy");
+    expect(localizePath("fr", "/legal-notice")).toBe("/mentions-legales");
+    expect(localizePath("en", "/mentions-legales")).toBe("/en/legal-notice");
+    expect(localizePath("en", "/cgu/x")).toBe("/en/terms/x");
+    // segment non traduit : inchangé
+    expect(localizePath("en", "/cgux")).toBe("/en/cgux");
+  });
+
+  test("routeLocale avec slugs traduits", () => {
+    // URL canoniques : réécrites vers le dossier interne
+    expect(routeLocale("/cgu", null, null)).toEqual({ action: "rewrite", pathname: "/fr/terms" });
+    expect(routeLocale("/confidentialite", null, null)).toEqual({
+      action: "rewrite",
+      pathname: "/fr/privacy",
+    });
+    expect(routeLocale("/en/terms", null, null)).toEqual({ action: "next" });
+    expect(routeLocale("/en/privacy", null, null)).toEqual({ action: "next" });
+    // slug de la mauvaise langue : redirection vers le bon
+    expect(routeLocale("/en/cgu", null, null)).toEqual({
+      action: "redirect",
+      pathname: "/en/terms",
+    });
+    expect(routeLocale("/privacy", "fr", null)).toEqual({
+      action: "redirect",
+      pathname: "/confidentialite",
+    });
+    expect(routeLocale("/terms", "fr", null)).toEqual({ action: "redirect", pathname: "/cgu" });
+    expect(routeLocale("/fr/terms", null, null)).toEqual({ action: "redirect", pathname: "/cgu" });
+    // visiteur anglophone sur l'URL française
+    expect(routeLocale("/cgu", "en", null)).toEqual({ action: "redirect", pathname: "/en/terms" });
   });
 
   test("cookie partagé entre sous-domaines seulement sur un vrai domaine", () => {

@@ -5,6 +5,9 @@ import {
   defaultProfile,
   flattenDictionary,
   hubDictionaries,
+  LEGAL_PAGES,
+  LEGAL_UPDATED,
+  legalDoc,
   localizeProfile,
   parseProfile,
   profileSchema,
@@ -104,5 +107,24 @@ describe("profil", () => {
     expect(en.role).toBe(defaultProfile.texts.en.role);
     expect(en.handle).toBe("GHOM");
     expect("texts" in en).toBe(false);
+  });
+});
+
+describe("pages légales", () => {
+  test("chaque page existe dans chaque langue, même nombre de sections", () => {
+    for (const site of ["HUB", "STUDIO"] as const) {
+      for (const page of LEGAL_PAGES) {
+        const [fr, en] = LOCALES.map((l) => legalDoc(site, page, l));
+        expect(fr?.sections.length).toBe(en?.sections.length);
+        for (const doc of [fr, en]) {
+          expect(doc?.sections.every((s, i) => s.heading.startsWith(`${i + 1}. `))).toBe(true);
+          expect(doc?.sections.every((s) => s.body.length > 0)).toBe(true);
+        }
+      }
+    }
+  });
+
+  test("la date de mise à jour est une date ISO valide", () => {
+    expect(Number.isNaN(Date.parse(LEGAL_UPDATED))).toBe(false);
   });
 });

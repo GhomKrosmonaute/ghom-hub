@@ -1,4 +1,6 @@
-import { FUNDING_URLS } from "@ghom/content";
+import { FUNDING_URLS, legalUi } from "@ghom/content";
+import { localizePath } from "@ghom/core";
+import Link from "next/link";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
 
@@ -11,6 +13,26 @@ export async function Footer({ studioUrl }: { studioUrl: string }) {
         <span>
           © {new Date().getFullYear()} {profile.handle} · ghom.fr
         </span>
+        <nav aria-label={legalUi[locale].nav} className="flex flex-wrap gap-x-6 gap-y-2">
+          <Link
+            href={localizePath(locale, "/legal-notice")}
+            className="transition-colors hover:text-foreground"
+          >
+            {legalUi[locale]["legal-notice"]}
+          </Link>
+          <Link
+            href={localizePath(locale, "/terms")}
+            className="transition-colors hover:text-foreground"
+          >
+            {legalUi[locale].terms}
+          </Link>
+          <Link
+            href={localizePath(locale, "/privacy")}
+            className="transition-colors hover:text-foreground"
+          >
+            {legalUi[locale].privacy}
+          </Link>
+        </nav>
         <span className="flex gap-6">
           <a href={studioUrl} className="transition-colors hover:text-[#c6ff00]">
             nobrainnogame.ghom.fr ▸

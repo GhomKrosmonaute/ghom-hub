@@ -15,7 +15,6 @@ import { StudioPortal } from "./studio-portal";
 export default function HubScene() {
   const reduced = useReducedMotion();
   const [dpr, setDpr] = useState(1.5);
-  const [fx, setFx] = useState(true);
   const small = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
@@ -28,10 +27,12 @@ export default function HubScene() {
       gl={{ antialias: false, powerPreference: "high-performance", stencil: false }}
       camera={{ position: [0, 1.7, 8], fov: small ? 70 : 55, near: 0.1, far: 220 }}
     >
+      {/* Si les perfs faiblissent : on baisse la résolution, jamais les effets
+          (bloom + aberration chromatique font l'identité visuelle du hub). */}
       <PerformanceMonitor
         onIncline={() => setDpr(Math.min(2, window.devicePixelRatio))}
         onDecline={() => setDpr(1)}
-        onFallback={() => setFx(false)}
+        onFallback={() => setDpr(1)}
         flipflops={3}
       />
       <color attach="background" args={["#020204"]} />
@@ -45,7 +46,7 @@ export default function HubScene() {
       <ExoCore />
       <StudioPortal />
       <DataRain count={small ? 700 : 1800} />
-      {fx && <Effects />}
+      <Effects />
     </Canvas>
   );
 }

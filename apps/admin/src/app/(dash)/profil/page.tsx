@@ -12,7 +12,7 @@ export default async function ProfilePage() {
     <>
       <PageHeader kicker="ghom.fr · Dossier pilote" title="Profil">
         <a
-          href={`${PUBLIC_URLS.HUB}/fr#pilote`}
+          href={`${PUBLIC_URLS.HUB}/#pilote`}
           target="_blank"
           rel="noopener noreferrer"
           className="font-mono text-xs text-muted-foreground hover:text-foreground"

@@ -1,4 +1,4 @@
-import { LOCALE_META, LOCALES } from "@ghom/core";
+import { LOCALE_META, LOCALES, localizePath } from "@ghom/core";
 import { Toaster } from "@ghom/ui/components/sonner";
 import { TooltipProvider } from "@ghom/ui/components/tooltip";
 import type { Metadata, Viewport } from "next";
@@ -27,8 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: t.meta.title, template: "%s · No Brain No Game" },
     description: t.meta.description,
     alternates: {
-      canonical: `/${locale}`,
-      languages: { ...Object.fromEntries(LOCALES.map((l) => [l, `/${l}`])), "x-default": "/" },
+      canonical: localizePath(locale),
+      languages: {
+        ...Object.fromEntries(LOCALES.map((l) => [l, localizePath(l)])),
+        "x-default": "/",
+      },
     },
     openGraph: {
       title: "No Brain No Game",

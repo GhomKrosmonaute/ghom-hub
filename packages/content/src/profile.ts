@@ -73,7 +73,7 @@ export const defaultProfile: ProfileData = {
   links: [
     { label: "GitHub", href: "https://github.com/", code: "GH" },
     { label: "LinkedIn", href: "https://www.linkedin.com/", code: "IN" },
-    { label: "E-mail", href: "mailto:contact@ghom.fr", code: "@" },
+    { label: "E-mail", href: "mailto:camille.abella@proton.me", code: "@" },
     { label: "Buy me a coffee", href: "https://buymeacoffee.com/ghom", code: "¤" },
   ],
   texts: {

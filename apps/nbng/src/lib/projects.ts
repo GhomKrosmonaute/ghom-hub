@@ -5,6 +5,7 @@ import {
   KIND_META,
   type Locale,
   localizeProject,
+  localizeSiteUrl,
   type Project,
   productRef,
   projectUrl,
@@ -41,7 +42,5 @@ export function toView(project: Project, locale: Locale): ProjectView {
   };
 }
 
-/** URL d'un autre site du hub, dans la même langue. */
-export function withLocale(siteUrl: string, locale: Locale): string {
-  return `${siteUrl.replace(/\/$/, "")}/${locale}`;
-}
+/** URL d'un autre site du hub, dans la même langue (racine nue en français). */
+export const withLocale = localizeSiteUrl;

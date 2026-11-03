@@ -97,9 +97,26 @@ Définis dans `packages/content/src/funding.ts`.
 
 ## Langues
 
-Routing i18n natif de Next.js : `app/[lang]` + `src/proxy.ts`. Toute URL sans langue (`/`) redirige vers
-`/fr` ou `/en` selon le cookie `NEXT_LOCALE` (posé par le sélecteur FR / EN, partagé entre ghom.fr et ses
-sous-domaines), sinon l'en-tête `Accept-Language`. Le français est la langue par défaut.
+Routing i18n natif de Next.js (`app/[lang]` + `src/proxy.ts`), préfixe « si besoin » :
+
+| URL | Contenu |
+| --- | --- |
+| `ghom.fr/…` | français (langue par défaut, sans préfixe ; réécriture interne vers `/fr/…`) |
+| `ghom.fr/en/…` | anglais |
+| `ghom.fr/fr/…` | redirection permanente vers `ghom.fr/…` (une seule URL par page) |
+
+Sur une URL sans préfixe, un visiteur anglophone (cookie `NEXT_LOCALE` posé par le sélecteur
+FR / EN, sinon l'en-tête `Accept-Language`) est redirigé vers `/en`. Le cookie est partagé entre
+ghom.fr et ses sous-domaines. Logique testée : `routeLocale()` dans `packages/core/src/i18n.ts`.
+
+Certains slugs sont traduits (`PAGE_SLUGS`, même fichier) : le dossier Next garde un nom interne
+et le proxy réécrit l'URL publique, par ex. `/cgu` ↔ `/en/terms` (dossier `terms`) et
+`/confidentialite` ↔ `/en/privacy` (dossier `privacy`), `/mentions-legales` ↔ `/en/legal-notice`
+(dossier `legal-notice`). `localizePath()` convertit le slug,
+donc les liens, les `hreflang` et le sélecteur FR / EN suivent ; un slug de la mauvaise langue
+redirige vers le bon.
+
+Pages légales (mentions légales, CGU, confidentialité) des deux sites : textes dans `packages/content/src/legal.ts`.
 
 ## Raccourcis
 

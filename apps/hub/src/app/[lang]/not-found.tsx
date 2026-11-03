@@ -1,3 +1,4 @@
+import { localizePath } from "@ghom/core";
 import { GlitchText } from "@ghom/ui/cyber/glitch-text";
 import Link from "next/link";
 import { getDictionary, getLocale } from "@/i18n/server";
@@ -16,7 +17,7 @@ export default async function NotFound() {
         />
         <p className="text-muted-foreground">{t.notFound.body}</p>
         <Link
-          href={`/${locale}`}
+          href={localizePath(locale)}
           className="neon-text font-mono text-sm uppercase tracking-[0.3em] underline-offset-8 hover:underline"
         >
           {t.notFound.back}

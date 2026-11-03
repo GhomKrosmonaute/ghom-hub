@@ -26,9 +26,12 @@ describe("toView", () => {
     expect("translations" in ledger).toBe(false);
   });
 
-  test("withLocale ajoute la langue à l'URL d'un autre site", () => {
+  test("withLocale : langue en préfixe, sauf le français (racine nue)", () => {
     expect(withLocale("https://nobrainnogame.ghom.fr/", "en")).toBe(
       "https://nobrainnogame.ghom.fr/en",
+    );
+    expect(withLocale("https://nobrainnogame.ghom.fr/", "fr")).toBe(
+      "https://nobrainnogame.ghom.fr",
     );
   });
 
