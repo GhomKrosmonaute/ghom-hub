@@ -1,0 +1,119 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// PERSONAL → listé sur ghom.fr, servi sur <subdomain>.ghom.fr
+/// STUDIO   → listé sur nobrainnogame.ghom.fr, servi sur <subdomain>.nobrainnogame.ghom.fr
+enum Owner {
+  PERSONAL
+  STUDIO
+}
+
+enum ProjectKind {
+  WEB_APP
+  WEBSITE
+  GAME
+  TOOL
+  LIBRARY
+  BOT
+  OTHER
+}
+
+enum ProjectStatus {
+  LIVE
+  BETA
+  IN_DEV
+  PROTOTYPE
+  ARCHIVED
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  tagline     String
+  description String
+  owner       Owner         @default(PERSONAL)
+  kind        ProjectKind
+  status      ProjectStatus @default(IN_DEV)
+  /// Label DNS seul (ex: "void-runner"), pas l'hôte complet.
+  subdomain   String?
+  externalUrl String?
+  repoUrl     String?
+  coverUrl    String?
+  accent      String        @default("#00f0ff")
+  tags        String[]      @default([])
+  stack       String[]      @default([])
+  featured    Boolean       @default(false)
+  sortOrder   Int           @default(0)
+  year        Int
+  published   Boolean       @default(true)
+
+  // Champs spécifiques aux jeux
+  genre     String?
+  platforms String[] @default([])
+  players   String?
+
+  /// Traductions des champs texte, la base (colonnes) étant en français :
+  /// { "en": { "tagline": "…", "description": "…", "genre": "…", "players": "…", "tags": [] } }
+  translations Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([owner, subdomain])
+  @@index([owner, published])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String   @default("")
+  message   String
+  handled   Boolean  @default(false)
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([handled, createdAt])
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("nbng")
+  createdAt DateTime @default(now())
+}
+
+/// Site dont les textes d'interface sont surchargés depuis l'admin.
+enum Site {
+  HUB
+  STUDIO
+}
+
+/// Surcharge d'un texte d'interface. Les valeurs par défaut sont dans @ghom/content ;
+/// `key` est le chemin pointé du texte ("hero.scroll", "studio.ticker.2").
+model TranslationOverride {
+  id        String   @id @default(cuid())
+  site      Site
+  locale    String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@unique([site, locale, key])
+}
+
+/// Présentation de GHOM, éditée dans l'admin (une seule ligne, id = "main").
+/// Absente ou invalide → profil par défaut de @ghom/content.
+model Profile {
+  id        String   @id @default("main")
+  data      Json
+  updatedAt DateTime @updatedAt
+}

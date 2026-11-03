@@ -1,0 +1,10 @@
+@import "@ghom/ui/globals.css";
+@source "../";
+
+/* Palette de l'admin : même ADN que le hub, néons plus sobres pour la lisibilité. */
+:root {
+  --neon-1: #00f0ff;
+  --neon-2: #ff2bd6;
+  --neon-3: #e8ff3a;
+  --void: #030308;
+}

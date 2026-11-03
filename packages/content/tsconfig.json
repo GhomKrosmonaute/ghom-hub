@@ -1,0 +1,4 @@
+{
+  "extends": "@ghom/typescript-config/library.json",
+  "include": ["src"]
+}

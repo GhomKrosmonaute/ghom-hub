@@ -1,0 +1,77 @@
+# Production sur un VPS :
+#   docker compose -f infra/docker-compose.prod.yml --env-file infra/.env.prod up -d --build
+name: ghom
+
+x-db-url: &db-url
+  DATABASE_URL: postgresql://${POSTGRES_USER:-ghom}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ghom_hub}
+
+# Sites publics : base + secret partagé avec l'admin pour la revalidation immédiate
+x-site-env: &site-env
+  <<: *db-url
+  REVALIDATE_SECRET: ${REVALIDATE_SECRET:?REVALIDATE_SECRET manquant}
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ghom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant}
+      POSTGRES_DB: ${POSTGRES_DB:-ghom_hub}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ghom"]
+      interval: 5s
+      retries: 10
+
+  migrate:
+    build: { context: .., dockerfile: infra/Dockerfile.migrate }
+    environment: *db-url
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  hub:
+    build: { context: .., dockerfile: infra/Dockerfile, args: { APP: hub } }
+    restart: unless-stopped
+    environment: *site-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  nbng:
+    build: { context: .., dockerfile: infra/Dockerfile, args: { APP: nbng } }
+    restart: unless-stopped
+    environment: *site-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  # Console d'administration (admin.ghom.fr)
+  admin:
+    build: { context: .., dockerfile: infra/Dockerfile, args: { APP: admin } }
+    restart: unless-stopped
+    environment:
+      <<: *db-url
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:?ADMIN_PASSWORD_HASH manquant}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET manquant}
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET:?REVALIDATE_SECRET manquant}
+      HUB_INTERNAL_URL: http://hub:3000
+      STUDIO_INTERNAL_URL: http://nbng:3000
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./games:/srv/games:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [hub, nbng, admin]
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

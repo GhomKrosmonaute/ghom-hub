@@ -1,0 +1,35 @@
+@import "@ghom/ui/globals.css";
+@source "../";
+
+/* Palette du pilote : cyan électrique, magenta, jaune acide. */
+:root {
+  --neon-1: #00f0ff;
+  --neon-2: #ff2bd6;
+  --neon-3: #e8ff3a;
+  --void: #020204;
+}
+
+/* Le réticule remplace le curseur sur les écrans à pointeur fin */
+@media (pointer: fine) {
+  html.has-reticle,
+  html.has-reticle * {
+    cursor: none !important;
+  }
+}
+
+.hud-gauge-fill {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--glow, var(--neon-1)) 0 6px,
+    transparent 6px 8px
+  );
+}
+
+@keyframes card-scan {
+  from {
+    top: 0%;
+  }
+  to {
+    top: 100%;
+  }
+}

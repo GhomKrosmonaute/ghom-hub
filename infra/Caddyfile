@@ -1,0 +1,56 @@
+# Reverse proxy + HTTPS automatique (Let's Encrypt, challenge HTTP).
+# Chaque nouveau projet / jeu = un bloc de plus ici.
+
+{
+	email contact@ghom.fr
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}
+
+# ── Hub principal ────────────────────────────────────────────
+ghom.fr {
+	import common
+	reverse_proxy hub:3000
+}
+
+www.ghom.fr {
+	redir https://ghom.fr{uri} permanent
+}
+
+# ── Hub du studio ────────────────────────────────────────────
+nobrainnogame.ghom.fr {
+	import common
+	reverse_proxy nbng:3000
+}
+
+# ── Console d'administration ─────────────────────────────
+admin.ghom.fr {
+	import common
+	header X-Robots-Tag "noindex, nofollow"
+	# Optionnel : n'autoriser que tes IP (en plus du mot de passe)
+	# @outside not remote_ip 203.0.113.42/32
+	# respond @outside 403
+	reverse_proxy admin:3000
+}
+
+# ── Projets perso : <projet>.ghom.fr ─────────────────────────
+# ledger.ghom.fr {
+# 	import common
+# 	reverse_proxy ledger:3000
+# }
+
+# ── Jeux du studio : <jeu>.nobrainnogame.ghom.fr ─────────────
+# Un jeu web statique (build HTML/JS) déposé dans infra/games/<jeu> :
+# void-tactics.nobrainnogame.ghom.fr {
+# 	import common
+# 	root * /srv/games/void-tactics
+# 	file_server
+# }

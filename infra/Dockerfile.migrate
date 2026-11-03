@@ -1,0 +1,7 @@
+# Applique les migrations Prisma puis s'arrête.
+FROM oven/bun:1.3.14
+WORKDIR /repo
+COPY . .
+RUN bun install --frozen-lockfile && touch .env
+WORKDIR /repo/packages/db
+CMD ["bunx", "prisma", "migrate", "deploy"]

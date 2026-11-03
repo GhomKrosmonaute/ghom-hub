@@ -1,0 +1,24 @@
+{
+  "name": "@ghom/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hub": "./src/hub/index.ts",
+    "./nbng": "./src/nbng/index.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ghom/core": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@ghom/typescript-config": "workspace:*",
+    "@types/bun": "1.4.4",
+    "typescript": "6.0.3"
+  }
+}

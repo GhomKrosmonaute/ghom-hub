@@ -1,0 +1,9 @@
+{
+  "extends": "@ghom/typescript-config/library.json",
+  "compilerOptions": {
+    "paths": {
+      "@ghom/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

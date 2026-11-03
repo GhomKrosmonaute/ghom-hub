@@ -1,0 +1,63 @@
+@import "@ghom/ui/globals.css";
+@source "../";
+
+/* Palette arcade : vert acide, orange brûlé, violet. Plus chaud et plus "jouet" que le hub. */
+:root {
+  --neon-1: #c6ff00;
+  --neon-2: #ff5e1a;
+  --neon-3: #a855ff;
+  --void: #050307;
+  --background: #070409;
+  --card: #0d0810;
+  --popover: #0b0710;
+  --primary-foreground: #0b0f00;
+  --muted-foreground: #8f8299;
+  --border: color-mix(in oklab, var(--neon-1) 18%, #221a28);
+  --input: color-mix(in oklab, var(--neon-1) 26%, #221a28);
+}
+
+/* Titre en relief façon enseigne d'arcade */
+.extrude {
+  text-shadow:
+    1px 1px 0 var(--neon-2),
+    2px 2px 0 var(--neon-2),
+    3px 3px 0 color-mix(in oklab, var(--neon-2) 80%, black),
+    4px 4px 0 color-mix(in oklab, var(--neon-2) 60%, black),
+    5px 5px 0 color-mix(in oklab, var(--neon-2) 40%, black),
+    6px 6px 18px rgb(0 0 0 / 0.8);
+}
+
+.pixel-font {
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: none;
+}
+
+@keyframes press-start {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes crt-on {
+  0% {
+    transform: scale(1, 0.004);
+    filter: brightness(4);
+  }
+  40% {
+    transform: scale(1, 0.004);
+    filter: brightness(4);
+  }
+  70% {
+    transform: scale(1, 1);
+    filter: brightness(1.6);
+  }
+  100% {
+    transform: scale(1, 1);
+    filter: brightness(1);
+  }
+}
