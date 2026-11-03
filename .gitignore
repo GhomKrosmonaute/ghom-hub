@@ -16,3 +16,5 @@ AGENTS.md
 # Archive et extraction du branding (régénérables avec `bun run brand`)
 brand/nobrainnogame/*.zip
 brand/nobrainnogame/nobrainnogame-branding/
+.neon
+.env.neon

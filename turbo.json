@@ -29,5 +29,5 @@
       "dependsOn": ["^db:generate"]
     }
   },
-  "globalPassThroughEnv": ["VERCEL", "VERCEL_ENV", "DIRECT_DATABASE_URL"]
+  "globalPassThroughEnv": ["DATABASE_URL_UNPOOLED", "DIRECT_DATABASE_URL", "VERCEL", "VERCEL_ENV"]
 }

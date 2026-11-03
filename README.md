@@ -81,7 +81,7 @@ protégé par `REVALIDATE_SECRET`) : c'est visible immédiatement.
 `infra/.env.prod` (prod) :
 
 ```bash
-bun --cwd apps/admin run admin:hash
+bun admin:hash
 ```
 
 Sécurité : session signée (cookie httpOnly, 7 jours), 5 essais par IP / 15 min, toutes les actions
@@ -119,8 +119,11 @@ sous-domaines), sinon l'en-tête `Accept-Language`. Le français est la langue p
 Chaque app a un `vercel.json` (installation Bun à la racine, build Turbo filtré, région `fra1`,
 build sauté si l'app n'a pas changé). Les migrations Prisma sont appliquées par le build du hub.
 
-**1. Base Neon** — créer un projet (région *AWS Europe Central / Frankfurt*), puis récupérer deux URL
-dans *Connect* : la **pooled** (`…-pooler…`) → `DATABASE_URL`, la **direct** → `DIRECT_DATABASE_URL`.
+**1. Base Neon** — projet lié au dépôt (`neon.ts`, `neon init` / `neon deploy`), branche `production`,
+région Frankfurt. Les deux URL sont dans `.env.neon` (non versionné) : la **pooled** (`…-pooler…`)
+→ `DATABASE_URL` pour les apps, la **directe** → `DATABASE_URL_UNPOOLED` pour les migrations.
+Utiliser `sslmode=verify-full` dans les URL (comportement SSL strict, sans avertissement de `pg`).
+Appliquer les migrations à la main si besoin : `set -a; . ./.env.neon; set +a; bun db:deploy`.
 
 **2. Trois projets Vercel** — *Add New → Project*, importer le dépôt GitHub trois fois :
 
@@ -135,7 +138,7 @@ Variables d'environnement (*Settings → Environment Variables*, environnement *
 | Variable | hub | nbng | admin |
 | --- | :-: | :-: | :-: |
 | `DATABASE_URL` (Neon pooled) | ✓ | ✓ | ✓ |
-| `DIRECT_DATABASE_URL` (Neon direct) | ✓ | | |
+| `DATABASE_URL_UNPOOLED` (Neon directe) | ✓ | | |
 | `NEXT_PUBLIC_ROOT_DOMAIN=ghom.fr` | ✓ | ✓ | ✓ |
 | `NEXT_PUBLIC_STUDIO_LABEL=nobrainnogame` | ✓ | ✓ | ✓ |
 | `NEXT_PUBLIC_PROTOCOL=https` | ✓ | ✓ | ✓ |
@@ -146,7 +149,7 @@ Variables d'environnement (*Settings → Environment Variables*, environnement *
 | `HUB_INTERNAL_URL=https://ghom.fr` | | | ✓ |
 | `STUDIO_INTERNAL_URL=https://nobrainnogame.ghom.fr` | | | ✓ |
 
-Les trois secrets se génèrent avec `bun --cwd apps/admin run admin:hash`.
+Les trois secrets se génèrent avec `bun admin:hash`.
 Déployer le hub en premier (il crée les tables).
 
 **3. DNS chez OVH** — remplacer les enregistrements par défaut de la zone `ghom.fr` par ceux que

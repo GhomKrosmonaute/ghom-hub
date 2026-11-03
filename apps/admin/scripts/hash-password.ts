@@ -1,7 +1,7 @@
 /**
  * Génère les secrets de l'admin :
- *   bun run admin:hash            (demande le mot de passe)
- *   bun run admin:hash "mot de passe"
+ *   bun admin:hash                (à la racine ; demande le mot de passe)
+ *   bun admin:hash "mot de passe"
  */
 import { randomBytes } from "node:crypto";
 import { hashPassword } from "../src/auth/password";

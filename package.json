@@ -17,14 +17,17 @@
     "check": "biome check . && turbo run typecheck test",
     "db:up": "docker compose up -d postgres",
     "db:generate": "turbo run db:generate",
-    "db:migrate": "bun --cwd packages/db run db:migrate",
-    "db:deploy": "bun --cwd packages/db run db:deploy",
-    "db:seed": "bun --cwd packages/db run db:seed",
-    "db:studio": "bun --cwd packages/db run db:studio",
+    "db:migrate": "bun --cwd=packages/db run db:migrate",
+    "db:deploy": "bun --cwd=packages/db run db:deploy",
+    "db:seed": "bun --cwd=packages/db run db:seed",
+    "db:studio": "bun --cwd=packages/db run db:studio",
+    "admin:hash": "bun --cwd=apps/admin run admin:hash",
     "brand": "bun brand/generate.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
+    "@neon/config": "1.10.0",
+    "@neon/env": "1.6.8",
     "turbo": "2.11.10",
     "typescript": "6.0.3"
   }

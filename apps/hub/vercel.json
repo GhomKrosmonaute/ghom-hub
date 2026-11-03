@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "cd ../.. && bun install --frozen-lockfile",
-  "buildCommand": "cd ../.. && bun --cwd packages/db run db:deploy && bunx turbo run build --filter=@ghom/hub",
+  "buildCommand": "cd ../.. && bun --cwd=packages/db run db:deploy && bunx turbo run build --filter=@ghom/hub",
   "ignoreCommand": "cd ../.. && bunx turbo-ignore @ghom/hub --fallback=HEAD^1",
   "regions": ["fra1"]
 }
