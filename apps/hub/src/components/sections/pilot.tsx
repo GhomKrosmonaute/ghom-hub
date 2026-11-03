@@ -86,7 +86,7 @@ export async function Pilot() {
               </div>
             ))}
           </dl>
-          <div className="mt-6 flex justify-center gap-2">
+          <div className="mt-6 flex justify-center gap-1.5">
             {profile.links.map((l) => (
               <a
                 key={l.label}
@@ -94,7 +94,7 @@ export async function Pilot() {
                 target={l.href.startsWith("http") ? "_blank" : undefined}
                 rel="noopener noreferrer"
                 data-lock={l.label}
-                className="cyber-clip-sm border border-neon-1/40 px-3 py-2 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-neon-1 transition-colors hover:bg-neon-1/15"
+                className="cyber-clip-sm whitespace-nowrap border border-neon-1/40 px-1.5 py-2 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-neon-1 transition-colors hover:bg-neon-1/15"
               >
                 {l.label}
               </a>
