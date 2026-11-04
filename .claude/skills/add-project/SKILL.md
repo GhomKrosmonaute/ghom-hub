@@ -42,6 +42,7 @@ Ask the user only for real choices: **featured or not**, and the status when it 
 | | Année, Ordre, Couleur néon | colour `#rrggbb`: take the project's own brand colour |
 | | Stack | comma-separated |
 | | Publié / Mis en avant | published by default; **featured only if the user says so** |
+| | Jouable | games only: tick it as soon as the game can be launched in the browser, **whatever its status** (a prototype counts). Drives the « Jouables » counters (hub and studio) and the Play button; status no longer does |
 | Liens | Sous-domaine | label only (`devgame`). Becomes `<label>.ghom.fr` (PERSONAL) or `<label>.nobrainnogame.ghom.fr` (STUDIO). Reserved: `www api admin mail nobrainnogame`. **Takes priority over URL externe.** |
 | | URL externe | used only without a subdomain (docs, store page…) |
 | | Code source, Visuel | |
