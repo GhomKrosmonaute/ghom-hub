@@ -24,6 +24,7 @@ export function toFormDefaults(p: DbProject | null): ProjectFormInput {
     tags: list(p?.tags),
     stack: list(p?.stack),
     featured: p?.featured ?? false,
+    playable: p?.playable ?? false,
     published: p?.published ?? true,
     sortOrder: String(p?.sortOrder ?? 0),
     year: String(p?.year ?? new Date().getFullYear()),

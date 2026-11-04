@@ -11,8 +11,6 @@ import { addScore } from "../arcade/score";
 import { isTyping } from "../arcade/stages";
 import { PixelSprite } from "./pixel-sprite";
 
-const PLAYABLE = new Set(["LIVE", "BETA"]);
-
 /** Écran de sélection façon borne : liste de cartouches + grand écran de prévisualisation. */
 export function GameSelect({ games }: { games: ProjectView[] }) {
   const { t } = useI18n();
@@ -48,7 +46,7 @@ export function GameSelect({ games }: { games: ProjectView[] }) {
       } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
         e.preventDefault();
         select(index - 1);
-      } else if (e.key === "Enter" && game?.url && PLAYABLE.has(game.status)) {
+      } else if (e.key === "Enter" && game?.url && game.playable) {
         playSfx("coin");
         window.open(game.url, "_blank", "noopener");
       }
@@ -68,7 +66,7 @@ export function GameSelect({ games }: { games: ProjectView[] }) {
     );
   }
 
-  const playable = Boolean(game.url) && PLAYABLE.has(game.status);
+  const playable = Boolean(game.url) && game.playable;
 
   return (
     <section ref={section} id="jeux" className="relative scroll-mt-16 px-8 py-28 md:px-20 lg:px-28">

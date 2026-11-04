@@ -54,6 +54,8 @@ model Project {
   sortOrder   Int           @default(0)
   year        Int
   published   Boolean       @default(true)
+  /// Jeu jouable dans le navigateur (case à cocher de l'admin).
+  playable    Boolean       @default(false)
 
   // Champs spécifiques aux jeux
   genre     String?

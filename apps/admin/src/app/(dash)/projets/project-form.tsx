@@ -346,6 +346,11 @@ export function ProjectForm({
                   label="Mis en avant"
                   description="★ Sélection, en tête de liste."
                 />
+                <SwitchField
+                  name="playable"
+                  label="Jouable"
+                  description="Le jeu peut être lancé dans le navigateur (prototype compris). Compte dans « Jouables » et active le bouton Jouer."
+                />
               </div>
             </TabsContent>
 

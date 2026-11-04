@@ -83,6 +83,7 @@ export function projectInputSchema(domains: DomainConfig) {
       tags: csvList,
       stack: csvList,
       featured: z.boolean().default(false),
+      playable: z.boolean().default(false),
       published: z.boolean().default(true),
       sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
       year: z.coerce.number().int().min(1990, "Année invalide").max(2100, "Année invalide"),

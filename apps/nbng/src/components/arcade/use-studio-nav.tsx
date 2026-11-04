@@ -10,8 +10,6 @@ import { useI18n } from "@/i18n/client";
 import type { ProjectView } from "@/lib/projects";
 import { goTo, STAGES } from "./stages";
 
-const PLAYABLE = new Set(["LIVE", "BETA"]);
-
 /** Navigation du portail studio pour le menu du clic droit. */
 export function useStudioNav({
   games,
@@ -50,7 +48,7 @@ export function useStudioNav({
       heading: t.nav.games,
       submenu: { label: t.nav.games, icon: <Swords /> },
       items: games.map((g) => {
-        const playable = Boolean(g.url) && PLAYABLE.has(g.status);
+        const playable = Boolean(g.url) && g.playable;
         return {
           id: g.id,
           label: g.name,

@@ -18,6 +18,7 @@ export function makeProject(overrides: Partial<Project> = {}): Project {
     tags: [],
     stack: [],
     featured: false,
+    playable: false,
     sortOrder: 0,
     year: 2026,
     genre: null,

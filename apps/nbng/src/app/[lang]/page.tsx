@@ -29,11 +29,11 @@ export default async function StudioPage() {
             { label: t.studio.stats.games, value: games.length },
             {
               label: t.studio.stats.playable,
-              value: games.filter((g) => g.status === "LIVE" || g.status === "BETA").length,
+              value: games.filter((g) => g.playable).length,
             },
             {
               label: t.studio.stats.inDev,
-              value: games.filter((g) => g.status === "IN_DEV" || g.status === "PROTOTYPE").length,
+              value: games.filter((g) => !g.playable && g.status !== "ARCHIVED").length,
             },
             { label: t.studio.stats.brain, value: 1 },
           ]}

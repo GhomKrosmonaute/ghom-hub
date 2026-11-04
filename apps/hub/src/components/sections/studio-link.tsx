@@ -14,7 +14,7 @@ export async function StudioLink({
   studioUrl: string;
 }) {
   const t = await getDictionary();
-  const live = games.filter((g) => g.status === "LIVE" || g.status === "BETA").length;
+  const live = games.filter((g) => g.playable).length;
 
   return (
     <section

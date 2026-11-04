@@ -30,6 +30,7 @@ export function toProject(row: DbProject): Project {
     tags: row.tags,
     stack: row.stack,
     featured: row.featured,
+    playable: row.playable,
     sortOrder: row.sortOrder,
     year: row.year,
     genre: row.genre,

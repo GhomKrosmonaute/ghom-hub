@@ -50,6 +50,7 @@ export interface Project {
   tags: string[];
   stack: string[];
   featured: boolean;
+  playable: boolean;
   sortOrder: number;
   year: number;
   genre: string | null;
