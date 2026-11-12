@@ -33,3 +33,25 @@
     top: 100%;
   }
 }
+
+/* CV (/cv) : une feuille A4 sans marge, couleurs conservées à l'impression et dans le PDF. */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  .cv-page,
+  .cv-page * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .cv-page {
+    background: #05060b;
+  }
+  .cv-sheet {
+    width: 210mm;
+    max-width: none;
+    height: 297mm;
+    aspect-ratio: auto;
+  }
+}

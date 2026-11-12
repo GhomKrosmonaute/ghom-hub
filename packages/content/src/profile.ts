@@ -82,7 +82,7 @@ export const defaultProfile: ProfileData = {
     { label: "GitHub", href: "https://github.com/GhomKrosmonaute", code: "GH" },
     {
       label: "LinkedIn",
-      href: "https://www.linkedin.com/in/camille-abella-a99950176/",
+      href: "https://www.linkedin.com/in/ghom/",
       code: "IN",
     },
     { label: "Malt", href: "https://www.malt.fr/profile/camilleabella", code: "MLT" },

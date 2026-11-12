@@ -22,12 +22,14 @@
     "db:seed": "bun --cwd=packages/db run db:seed",
     "db:studio": "bun --cwd=packages/db run db:studio",
     "admin:hash": "bun --cwd=apps/admin run admin:hash",
-    "brand": "bun brand/generate.ts"
+    "brand": "bun brand/generate.ts",
+    "cv:pdf": "bun scripts/cv-pdf.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
     "@neon/config": "1.10.0",
     "@neon/env": "1.6.8",
+    "playwright": "1.56.1",
     "turbo": "2.11.10",
     "typescript": "6.0.3"
   }

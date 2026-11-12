@@ -1,4 +1,6 @@
+import { localizePath } from "@ghom/core";
 import { Brackets } from "@ghom/ui/cyber/brackets";
+import Link from "next/link";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { BackpackSchematic } from "./backpack-schematic";
@@ -86,7 +88,14 @@ export async function Pilot() {
               </div>
             ))}
           </dl>
-          <div className="mt-6 flex flex-wrap justify-center gap-1.5">
+          <Link
+            href={localizePath(locale, "/cv")}
+            data-lock="CV"
+            className="cyber-clip-sm mt-6 block border border-neon-2 bg-neon-2/10 px-3 py-2.5 text-center font-mono text-xs uppercase tracking-[0.2em] text-neon-2 transition-colors hover:bg-neon-2 hover:text-void"
+          >
+            {locale === "fr" ? "▸ Voir le CV" : "▸ View résumé"}
+          </Link>
+          <div className="mt-3 flex flex-wrap justify-center gap-1.5">
             {profile.links.map((l) => (
               <a
                 key={l.label}
