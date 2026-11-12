@@ -27,5 +27,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Ni l'API, ni les assets Next, ni les fichiers (icon.svg, robots.txt…)
-  matcher: ["/((?!_next|api|.*\\..*).*)"],
+  matcher: ["/((?!_next|api|.*opengraph-image|.*\\..*).*)"],
 };

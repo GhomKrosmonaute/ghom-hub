@@ -2,8 +2,9 @@ import type { Dictionary } from "./fr";
 
 export const en: Dictionary = {
   meta: {
-    title: "GHOM — Pilot hub",
-    description: "Projects, web apps, tools and games by GHOM. Step into the exoskeleton.",
+    title: "GHOM — Full-stack & game developer",
+    description:
+      "Portfolio of Ghom, a freelance full-stack and game developer based in Perpignan, France: web apps, open source tools and games you can play in the browser.",
   },
   sections: {
     aria: "Sections",

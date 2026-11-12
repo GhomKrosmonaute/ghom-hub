@@ -7,8 +7,9 @@ import type { Widen } from "../dictionary";
  */
 export const fr = {
   meta: {
-    title: "GHOM — Hub du pilote",
-    description: "Projets, apps web, outils et jeux de GHOM. Montez dans l'exosquelette.",
+    title: "GHOM — Développeur full-stack & game dev",
+    description:
+      "Portfolio de Ghom, développeur full-stack et game dev freelance à Perpignan : applications web, outils open source et jeux jouables dans le navigateur.",
   },
   sections: {
     aria: "Sections",

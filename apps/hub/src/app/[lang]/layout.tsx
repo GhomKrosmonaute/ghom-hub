@@ -45,6 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
       alternateLocale: LOCALES.filter((l) => l !== locale).map((l) => LOCALE_META[l].og),
       type: "website",
     },
+    twitter: { card: "summary_large_image", title: t.meta.title, description: t.meta.description },
   };
 }
 
