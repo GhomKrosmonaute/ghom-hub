@@ -50,6 +50,7 @@ export type ProfileInput = z.input<typeof profileSchema>;
 export const defaultProfile: ProfileData = {
   handle: "GHOM",
   unit: "EXO-7 · MK.II",
+  // L'ordre compte : il place chaque système sur une pièce du sac (voir ZONES dans backpack-schematic.tsx).
   systems: [
     { code: "SYS.01", label: "TypeScript", level: 95 },
     { code: "SYS.02", label: "React / Next.js", level: 92 },

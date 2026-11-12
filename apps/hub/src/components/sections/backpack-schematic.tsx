@@ -5,20 +5,23 @@ import { useId, useState } from "react";
 type System = { code: string; label: string };
 type Zone = { d: string; x: number; y: number };
 
-/** Zones du sac, dans l'ordre d'attribution aux systèmes (repère = point visé). */
+/**
+ * Zones du sac, dans l'ordre des systèmes du profil (SYS.01, SYS.02…) : chaque compétence
+ * occupe la pièce qui lui correspond. Repère (x, y) = point visé par l'étiquette.
+ */
 const ZONES: Zone[] = [
-  { d: "M182 72h96l14 40H168Z", x: 230, y: 92 }, // rabat supérieur
-  { d: "M262 30h22v18h-22Z", x: 273, y: 39 }, // module antenne
-  { d: "M174 118h112v108H174Z", x: 230, y: 172 }, // compartiment principal
-  { d: "M150 148h20v112h-20Z", x: 160, y: 204 }, // poche latérale gauche
-  { d: "M290 148h20v112h-20Z", x: 300, y: 204 }, // poche latérale droite
-  { d: "M190 236h80v58h-80Z", x: 230, y: 265 }, // poche frontale
-  { d: "M196 302h68v20h-68Z", x: 230, y: 312 }, // cellule d'énergie
-  { d: "M184 126h30v16h-30Z", x: 199, y: 134 }, // panneau de diodes
-  { d: "M204 50h52v14h-52Z", x: 230, y: 57 }, // poignée
-  { d: "M310 160h12v58h-12Z", x: 316, y: 190 }, // tube d'alimentation
-  { d: "M240 242h24v14h-24Z", x: 252, y: 249 }, // badge de la poche frontale
-  { d: "M160 120h10v24h-10Z", x: 165, y: 132 }, // attache de sangle
+  { d: "M196 302h68v20h-68Z", x: 230, y: 312 }, // TypeScript : la cellule d'énergie qui alimente tout
+  { d: "M190 236h80v58h-80Z", x: 230, y: 265 }, // React / Next.js : la poche frontale, le front
+  { d: "M290 148h20v112h-20Z", x: 300, y: 204 }, // three.js / WebGL : poche latérale droite, le moteur de rendu
+  { d: "M150 148h20v112h-20Z", x: 160, y: 204 }, // PostgreSQL / Prisma : poche latérale gauche, le stockage
+  { d: "M182 72h96l14 40H168Z", x: 230, y: 92 }, // Game design : le rabat, la vue d'ensemble
+  { d: "M310 160h12v58h-12Z", x: 316, y: 190 }, // DevOps / Docker : le tube d'alimentation, le pipeline
+  { d: "M184 126h30v16h-30Z", x: 199, y: 134 }, // UI : le panneau de diodes, l'interface
+  { d: "M174 118h112v108H174Z", x: 230, y: 172 }, // UX : le compartiment principal, autour de l'UI
+  { d: "M262 30h22v18h-22Z", x: 273, y: 39 }, // Cybersec : l'antenne, ce qui surveille les ondes
+  { d: "M204 50h52v14h-52Z", x: 230, y: 57 }, // poignée (libre)
+  { d: "M240 242h24v14h-24Z", x: 252, y: 249 }, // badge de la poche frontale (libre)
+  { d: "M160 120h10v24h-10Z", x: 165, y: 132 }, // attache de sangle (libre)
 ];
 
 /** Le sac est dessiné autour de x = 230 ; il est décalé de DX dans la vue large. */
