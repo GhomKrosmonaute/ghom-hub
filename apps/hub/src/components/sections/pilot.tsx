@@ -3,7 +3,9 @@ import { Brackets } from "@ghom/ui/cyber/brackets";
 import Link from "next/link";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
+import { getGithubTelemetry } from "@/lib/github";
 import { BackpackSchematic } from "./backpack-schematic";
+import { GithubTelemetry } from "./github-telemetry";
 import { Panel, SectionHeader } from "./section-header";
 
 /** Emblème du pilote : un casque de mecha stylisé en SVG. */
@@ -55,7 +57,7 @@ function HelmetEmblem() {
 
 export async function Pilot() {
   const [t, locale] = await Promise.all([getDictionary(), getLocale()]);
-  const profile = await getProfile(locale);
+  const [profile, github] = await Promise.all([getProfile(locale), getGithubTelemetry()]);
   return (
     <section id="pilote" className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40">
       <SectionHeader code="01" kicker={t.pilot.kicker} title={t.pilot.title} />
@@ -127,19 +129,22 @@ export async function Pilot() {
           </Panel>
 
           <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
-            <Panel className="p-6">
-              <p className="hud-label mb-5 text-neon-2">{t.pilot.loadout}</p>
-              <ul className="flex flex-wrap gap-2">
-                {profile.loadout.map((item) => (
-                  <li
-                    key={item}
-                    className="border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-foreground/80 transition-colors hover:border-neon-1/60 hover:text-neon-1"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Panel>
+            <div className="grid min-w-0 gap-6">
+              <Panel className="p-6">
+                <p className="hud-label mb-5 text-neon-2">{t.pilot.loadout}</p>
+                <ul className="flex flex-wrap gap-2">
+                  {profile.loadout.map((item) => (
+                    <li
+                      key={item}
+                      className="border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-foreground/80 transition-colors hover:border-neon-1/60 hover:text-neon-1"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+              {github && <GithubTelemetry data={github} t={t.pilot} locale={locale} />}
+            </div>
 
             <Panel className="p-6">
               <p className="hud-label mb-4 text-neon-2">{t.pilot.logbook}</p>
