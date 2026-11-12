@@ -18,8 +18,6 @@ export function useActiveSection() {
       const el = document.getElementById(s.id);
       if (el) io.observe(el);
     }
-    const hero = document.getElementById("cockpit");
-    if (hero) io.observe(hero);
     return () => io.disconnect();
   }, []);
 

@@ -8,6 +8,7 @@ export const en: Dictionary = {
   },
   sections: {
     aria: "Sections",
+    cockpit: "Cockpit",
     pilote: "Pilot",
     arsenal: "Arsenal",
     studio: "Studio",

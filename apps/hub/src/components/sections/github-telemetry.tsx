@@ -87,7 +87,6 @@ export function GithubTelemetry({ data, t, locale }: { data: Data; t: Texts; loc
                 style={{ "--col": Math.floor(i / 7) } as CSSProperties}
               />
             ) : (
-              // biome-ignore lint/suspicious/noArrayIndexKey: cases vides de début de calendrier, fixes
               <span key={`pad${i}`} />
             ),
           )}

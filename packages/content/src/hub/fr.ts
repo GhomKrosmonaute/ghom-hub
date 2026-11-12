@@ -13,6 +13,7 @@ export const fr = {
   },
   sections: {
     aria: "Sections",
+    cockpit: "Cockpit",
     pilote: "Pilote",
     arsenal: "Arsenal",
     studio: "Studio",

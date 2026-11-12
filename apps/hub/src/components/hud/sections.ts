@@ -1,5 +1,6 @@
 /** Sections du hub ; les libellés viennent du dictionnaire (`t.sections[id]`). */
 export const SECTIONS = [
+  { id: "cockpit", code: "00" },
   { id: "pilote", code: "01" },
   { id: "arsenal", code: "02" },
   { id: "studio", code: "03" },
