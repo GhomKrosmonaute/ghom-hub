@@ -57,6 +57,9 @@ export const defaultProfile: ProfileData = {
     { code: "SYS.04", label: "PostgreSQL / Prisma", level: 85 },
     { code: "SYS.05", label: "Game design", level: 74 },
     { code: "SYS.06", label: "DevOps / Docker", level: 70 },
+    { code: "SYS.07", label: "UI", level: 85 },
+    { code: "SYS.08", label: "UX", level: 80 },
+    { code: "SYS.09", label: "Cybersec", level: 65 },
   ],
   loadout: [
     "Bun",

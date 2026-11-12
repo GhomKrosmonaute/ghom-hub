@@ -67,21 +67,21 @@ export function Arsenal({ projects }: { projects: ProjectView[] }) {
           {chip("ALL", t.arsenal.all, projects.length)}
           {kinds.map((k) => chip(k, KIND_META[k].label[locale], counts[k] ?? 0))}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           {archivedCount > 0 && (
             <button
               type="button"
               onClick={() => setShowArchived((v) => !v)}
               aria-pressed={showArchived}
               className={cn(
-                "font-mono text-[0.65rem] uppercase tracking-[0.18em] transition-colors",
+                "whitespace-nowrap font-mono text-[0.65rem] uppercase tracking-[0.18em] transition-colors",
                 showArchived ? "text-neon-3" : "text-muted-foreground hover:text-foreground",
               )}
             >
               [{showArchived ? "x" : " "}] {t.arsenal.archived}
             </button>
           )}
-          <div className="relative block w-full lg:w-72">
+          <div className="relative block min-w-[12rem] flex-1 lg:w-72 lg:flex-none">
             <label htmlFor="arsenal-search" className="sr-only">
               {t.arsenal.searchLabel}
             </label>
@@ -106,7 +106,7 @@ export function Arsenal({ projects }: { projects: ProjectView[] }) {
           {visible.map((p, i) => (
             <div
               key={p.id}
-              className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-500"
+              className="h-full animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-500"
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <ProductCard project={p} onInspect={() => setInspected(p)} />

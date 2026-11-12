@@ -12,7 +12,7 @@ export async function Hero({ stats }: { stats: { label: string; value: number }[
       id="cockpit"
       className="relative flex min-h-dvh items-center px-6 pt-24 pb-28 md:px-28 lg:px-40"
     >
-      <div className="max-w-3xl">
+      <div className="relative z-10 max-w-3xl">
         <p className="hud-label mb-4 flex items-center gap-3 text-neon-1">
           <span className="inline-block h-px w-10 bg-neon-1" />
           {t.hero.identified} · {profile.unit}
@@ -26,9 +26,9 @@ export async function Hero({ stats }: { stats: { label: string; value: number }[
           as="p"
           text={profile.role}
           duration={1100}
-          className="mt-6 font-mono text-sm uppercase tracking-[0.35em] text-neon-2 md:text-base"
+          className="mt-6 inline-block bg-[#05060b]/55 font-mono text-sm uppercase tracking-[0.35em] text-neon-2 backdrop-blur-[2px] md:bg-transparent md:text-base md:backdrop-blur-none"
         />
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-foreground/80 md:text-xl">
+        <p className="mt-6 max-w-xl bg-[#05060b]/55 text-lg leading-relaxed text-foreground/90 backdrop-blur-[2px] md:bg-transparent md:text-xl md:backdrop-blur-none">
           {profile.tagline}
         </p>
 

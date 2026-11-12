@@ -9,11 +9,14 @@ export async function Footer({ studioUrl }: { studioUrl: string }) {
   const profile = await getProfile(locale);
   return (
     <footer className="relative px-6 pt-10 pb-28 md:px-28 lg:px-40 lg:pb-16">
-      <div className="flex flex-col gap-4 border-t border-neon-1/20 pt-6 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <span>
+      <div className="flex flex-col gap-4 border-t border-neon-1/20 pt-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-foreground/70 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-x-8">
+        <span className="whitespace-nowrap">
           © {new Date().getFullYear()} {profile.handle} · ghom.fr
         </span>
-        <nav aria-label={legalUi[locale].nav} className="flex flex-wrap gap-x-6 gap-y-2">
+        <nav
+          aria-label={legalUi[locale].nav}
+          className="flex flex-wrap items-center gap-x-6 gap-y-2 [&_a]:whitespace-nowrap"
+        >
           <Link
             href={localizePath(locale, "/legal-notice")}
             className="transition-colors hover:text-foreground"
@@ -33,7 +36,7 @@ export async function Footer({ studioUrl }: { studioUrl: string }) {
             {legalUi[locale].privacy}
           </Link>
         </nav>
-        <span className="flex gap-6">
+        <span className="flex flex-wrap items-center gap-x-6 gap-y-2 whitespace-nowrap">
           <a href={studioUrl} className="transition-colors hover:text-[#c6ff00]">
             nobrainnogame.ghom.fr ▸
           </a>

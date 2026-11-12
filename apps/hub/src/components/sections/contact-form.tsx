@@ -126,7 +126,7 @@ export function ContactForm() {
         />
 
         <div className="flex items-center justify-between gap-4">
-          <p className="hud-label hidden sm:block">{t.contact.cipher}</p>
+          <p className="hud-label hidden text-foreground/70 sm:block">{t.contact.cipher}</p>
           <Button type="submit" size="lg" disabled={pending} data-lock={t.contact.send}>
             {pending ? <Loader2 className="animate-spin" /> : <Send />}
             {pending ? t.contact.sending : t.contact.send}

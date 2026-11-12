@@ -1,8 +1,8 @@
 import { Brackets } from "@ghom/ui/cyber/brackets";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
+import { BackpackSchematic } from "./backpack-schematic";
 import { Panel, SectionHeader } from "./section-header";
-import { SystemBar } from "./system-bar";
 
 /** Emblème du pilote : un casque de mecha stylisé en SVG. */
 function HelmetEmblem() {
@@ -58,9 +58,9 @@ export async function Pilot() {
     <section id="pilote" className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40">
       <SectionHeader code="01" kicker={t.pilot.kicker} title={t.pilot.title} />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(280px,380px)_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:items-start">
         {/* Carte d'identité */}
-        <Panel className="p-6">
+        <Panel className="min-w-0 p-6 lg:sticky lg:top-24">
           <Brackets inset={8} />
           <div className="mx-auto aspect-square w-48">
             <HelmetEmblem />
@@ -86,7 +86,7 @@ export async function Pilot() {
               </div>
             ))}
           </dl>
-          <div className="mt-6 flex justify-center gap-1.5">
+          <div className="mt-6 flex flex-wrap justify-center gap-1.5">
             {profile.links.map((l) => (
               <a
                 key={l.label}
@@ -102,7 +102,7 @@ export async function Pilot() {
           </div>
         </Panel>
 
-        <div className="grid gap-6">
+        <div className="grid min-w-0 gap-6">
           <Panel className="p-6 md:p-8">
             <p className="hud-label mb-4 text-neon-2">{t.pilot.briefing}</p>
             <div className="space-y-4 text-lg leading-relaxed text-foreground/85">
@@ -112,16 +112,12 @@ export async function Pilot() {
             </div>
           </Panel>
 
-          <div className="grid gap-6 xl:grid-cols-2">
-            <Panel className="p-6">
-              <p className="hud-label mb-5 text-neon-2">{t.pilot.systems}</p>
-              <div className="space-y-4">
-                {profile.systems.map((s, i) => (
-                  <SystemBar key={s.code} {...s} delay={i * 90} />
-                ))}
-              </div>
-            </Panel>
+          <Panel className="p-6">
+            <p className="hud-label mb-5 text-neon-2">{t.pilot.systems}</p>
+            <BackpackSchematic systems={profile.systems} />
+          </Panel>
 
+          <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
             <Panel className="p-6">
               <p className="hud-label mb-5 text-neon-2">{t.pilot.loadout}</p>
               <ul className="flex flex-wrap gap-2">
@@ -134,7 +130,10 @@ export async function Pilot() {
                   </li>
                 ))}
               </ul>
-              <p className="hud-label mt-8 mb-4 text-neon-2">{t.pilot.logbook}</p>
+            </Panel>
+
+            <Panel className="p-6">
+              <p className="hud-label mb-4 text-neon-2">{t.pilot.logbook}</p>
               <ol className="relative space-y-4 border-l border-neon-1/30 pl-5">
                 {profile.logbook.map((l) => (
                   <li key={l.year + l.entry} className="relative">
