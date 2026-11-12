@@ -94,11 +94,18 @@ export const defaultProfile: ProfileData = {
         "Je construis des interfaces qui se pilotent, des outils qui servent et des jeux qui font travailler le cerveau.",
       bio: [
         "Développement web de bout en bout : du schéma de base de données jusqu'au dernier pixel animé. J'aime les interfaces qui ont du caractère et les architectures qui restent simples.",
-        "Formé au développement web à Perpignan, j'ai passé cinq ans chez PlayCurious, un studio de serious games (CRISPR Crunch, Edenred Boat Quest, RedMetrics), avant de me lancer en freelance en 2023.",
+        "Formé au développement web à Perpignan, j'ai passé cinq ans chez PlayCurious, un studio de serious games (CRISPR Crunch, Edenred Boat Quest, RedMetrics), avant de me lancer en freelance en 2023. J'ai ensuite passé deux ans en CDI chez Danim comme développeur web, d'abord dans l'équipe R&D, puis dans l'équipe de développement du produit, avant de reprendre le freelance.",
         "En parallèle, je fais tourner No Brain No Game, un petit studio de jeux tactiques et stratégiques jouables directement dans le navigateur.",
       ],
       logbook: [
-        { year: "2026", entry: "Mise en service de ghom.fr et du portail No Brain No Game." },
+        {
+          year: "2026",
+          entry: "Mise en service de ghom.fr et du portail No Brain No Game. Retour au freelance.",
+        },
+        {
+          year: "2024",
+          entry: "CDI de développeur web chez Danim : l'équipe R&D, puis l'équipe produit.",
+        },
         {
           year: "2023",
           entry:
@@ -127,11 +134,18 @@ export const defaultProfile: ProfileData = {
         "I build interfaces you can pilot, tools that get the job done and games that make your brain work.",
       bio: [
         "End-to-end web development: from the database schema to the last animated pixel. I like interfaces with character and architectures that stay simple.",
-        "Trained as a web developer in Perpignan, I spent five years at PlayCurious, a serious games studio (CRISPR Crunch, Edenred Boat Quest, RedMetrics), before going freelance in 2023.",
+        "Trained as a web developer in Perpignan, I spent five years at PlayCurious, a serious games studio (CRISPR Crunch, Edenred Boat Quest, RedMetrics), before going freelance in 2023. I then spent two years as a web developer at Danim on a permanent contract, first in the R&D team, then in the product development team, before going back to freelancing.",
         "On the side, I run No Brain No Game, a small studio making tactical and strategy games you play right in the browser.",
       ],
       logbook: [
-        { year: "2026", entry: "ghom.fr and the No Brain No Game portal go live." },
+        {
+          year: "2026",
+          entry: "ghom.fr and the No Brain No Game portal go live. Back to freelancing.",
+        },
+        {
+          year: "2024",
+          entry: "Web developer at Danim (permanent contract): R&D team, then product team.",
+        },
         {
           year: "2023",
           entry:
