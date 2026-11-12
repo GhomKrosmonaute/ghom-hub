@@ -3,7 +3,8 @@
 import { useId, useState } from "react";
 
 type System = { code: string; label: string };
-type Zone = { d: string; x: number; y: number };
+/** `under` : zone qui en contient d'autres, dessinée dessous pour ne pas leur voler le survol. */
+type Zone = { d: string; x: number; y: number; under?: boolean };
 
 /**
  * Zones du sac, dans l'ordre des systèmes du profil (SYS.01, SYS.02…) : chaque compétence
@@ -17,7 +18,7 @@ const ZONES: Zone[] = [
   { d: "M182 72h96l14 40H168Z", x: 230, y: 92 }, // Game design : le rabat, la vue d'ensemble
   { d: "M310 160h12v58h-12Z", x: 316, y: 190 }, // DevOps / Docker : le tube d'alimentation, le pipeline
   { d: "M184 126h30v16h-30Z", x: 199, y: 134 }, // UI : le panneau de diodes, l'interface
-  { d: "M174 118h112v108H174Z", x: 230, y: 172 }, // UX : le compartiment principal, autour de l'UI
+  { d: "M174 118h112v108H174Z", x: 230, y: 172, under: true }, // UX : le compartiment principal, autour de l'UI
   { d: "M262 30h22v18h-22Z", x: 273, y: 39 }, // Cybersec : l'antenne, ce qui surveille les ondes
   { d: "M204 50h52v14h-52Z", x: 230, y: 57 }, // poignée (libre)
   { d: "M240 242h24v14h-24Z", x: 252, y: 249 }, // badge de la poche frontale (libre)
@@ -102,26 +103,35 @@ export function BackpackSchematic({ systems }: { systems: System[] }) {
     </defs>
   );
 
-  const zones = ZONES.map((z) => {
-    const on = activeZones.has(z);
-    return (
-      <path
-        key={z.d}
-        d={z.d}
-        fill={on ? `url(#${hatch})` : "transparent"}
-        stroke={on ? "var(--neon-2)" : "transparent"}
-        strokeWidth="1.6"
-        filter={on ? `url(#${glow})` : undefined}
-        className="transition-all duration-300"
-      />
-    );
-  });
+  // Survoler une pièce du sac active le système qui l'occupe (les pièces libres ne réagissent pas).
+  const systemOf = new Map(items.map((it) => [it.zone, it.i]));
+  const zones = [...ZONES]
+    .sort((a, b) => Number(!!b.under) - Number(!!a.under))
+    .map((z) => {
+      const on = activeZones.has(z);
+      const i = systemOf.get(z);
+      return (
+        // biome-ignore lint/a11y/noStaticElementInteractions: survol décoratif, la liste accessible est rendue à part
+        <path
+          key={z.d}
+          d={z.d}
+          fill={on ? `url(#${hatch})` : "transparent"}
+          stroke={on ? "var(--neon-2)" : "transparent"}
+          strokeWidth="1.6"
+          filter={on ? `url(#${glow})` : undefined}
+          pointerEvents={i === undefined ? "none" : undefined}
+          onMouseEnter={i === undefined ? undefined : () => setActive(i)}
+          onClick={i === undefined ? undefined : () => setActive(active === i ? null : i)}
+          className={`transition-all duration-300 ${i === undefined ? "" : "cursor-crosshair"}`}
+        />
+      );
+    });
 
   const marker = (it: Item, withNumber: boolean) => {
     const on = active === it.i;
     const color = on ? "var(--neon-2)" : "var(--neon-1)";
     return (
-      <g key={`m${it.code}`}>
+      <g key={`m${it.code}`} pointerEvents="none">
         {on && (
           <circle cx={it.zone.x} cy={it.zone.y} r="5" fill="none" stroke={color}>
             <animate attributeName="r" values="5;11;5" dur="1.2s" repeatCount="indefinite" />
