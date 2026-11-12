@@ -206,6 +206,9 @@ export const en: Dictionary = {
     loading: "Connecting to the stream…",
     profile: "Listen on SoundCloud ▸",
     albums: "Albums",
+    seek: "Track position",
+    album: "Album on SoundCloud",
+    error: "Playback unavailable right now.",
   },
   comms: {
     kicker: "Encrypted channel · Uplink",

@@ -1,7 +1,7 @@
 /**
- * Albums publiés sur SoundCloud (soundcloud.com/camilleabella), lus par le widget officiel.
+ * Albums publiés sur SoundCloud (soundcloud.com/camilleabella).
  * `wave` : enveloppe d'amplitude de chaque piste (128 points, 0–1), tirée de la forme d'onde
- * publique de SoundCloud ; elle anime le visualiseur 3D en suivant la position de lecture.
+ * publique de SoundCloud ; elle dessine la barre de progression du lecteur.
  */
 export type Track = { id: number; title: string; duration: number; wave: number[] };
 export type Album = {
@@ -15,6 +15,17 @@ export type Album = {
 };
 
 export const SOUNDCLOUD_PROFILE = "https://soundcloud.com/camilleabella";
+
+/**
+ * Fichiers audio (MP3) servis hors du dépôt, nommés `<id de piste>.mp3`. Le site les lit lui-même
+ * pour que le visualiseur analyse le son en direct ; SoundCloud reste lié pour l'attribution.
+ * En développement, NEXT_PUBLIC_MUSIC_BASE peut pointer vers /music (apps/hub/public/music, ignoré).
+ */
+/** Stockage Vercel Blob public « ghom-music » (CORS ouvert, requis pour l'analyse Web Audio). */
+export const MUSIC_BASE = "https://qkllovykr3pstpem.public.blob.vercel-storage.com";
+export const trackSrc = (track: Track, base = MUSIC_BASE) => `${base}/${track.id}.mp3`;
+/** Pistes d'animation précalculées (apps/hub/scripts/music-fx.ts) : basse, médiums, aigus et leurs coups. */
+export const fxSrc = (track: Track, base = MUSIC_BASE) => `${base}/${track.id}.fx.json`;
 
 export const albums: Album[] = [
   {

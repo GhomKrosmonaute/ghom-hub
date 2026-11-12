@@ -3,6 +3,7 @@
 import { KIND_META } from "@ghom/core";
 import { playSfx } from "@ghom/ui/hooks/use-sfx";
 import { cn } from "@ghom/ui/lib/utils";
+import Image from "next/image";
 import { useRef } from "react";
 import { useI18n } from "@/i18n/client";
 import type { ProjectView } from "@/lib/projects";
@@ -90,12 +91,12 @@ export function ProductCard({
 
         <div className="tech-grid relative grid aspect-[16/10] place-items-center overflow-hidden [--neon-1:var(--glow)]">
           {project.coverUrl ? (
-            // biome-ignore lint/performance/noImgElement: visuels hébergés n'importe où, pas de loader Next configuré
-            <img
+            <Image
               src={project.coverUrl}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-80"
-              loading="lazy"
+              fill
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              className="object-cover opacity-80"
             />
           ) : (
             <ProductGlyph

@@ -1,7 +1,9 @@
 "use client";
 
+import { useFrame } from "@react-three/fiber";
 import { useLayoutEffect, useMemo, useRef } from "react";
-import { Color, type InstancedMesh, Object3D } from "three";
+import { Color, type InstancedMesh, type MeshBasicMaterial, Object3D } from "three";
+import { rig } from "./rig";
 
 const NEONS = ["#00f0ff", "#ff2bd6", "#8b5cff", "#e8ff3a", "#ff5e1a"];
 
@@ -29,6 +31,14 @@ interface Tower {
 export function City({ count = 240 }: { count?: number }) {
   const towersRef = useRef<InstancedMesh>(null);
   const stripsRef = useRef<InstancedMesh>(null);
+  const stripsMat = useRef<MeshBasicMaterial>(null);
+
+  // Musique : les néons des tours respirent avec les basses, s'allument sur la caisse claire (teinte multipliée, jamais blanchie).
+  useFrame(() => {
+    stripsMat.current?.color.setScalar(
+      0.7 + rig.bass * 1.3 + rig.punch * 1.2 + rig.mid * 0.5 + rig.snare * 0.9,
+    );
+  });
 
   const towers = useMemo<Tower[]>(() => {
     const rand = mulberry32(7);
@@ -104,7 +114,7 @@ export function City({ count = 240 }: { count?: number }) {
         frustumCulled={false}
       >
         <boxGeometry />
-        <meshBasicMaterial toneMapped={false} />
+        <meshBasicMaterial ref={stripsMat} toneMapped={false} />
       </instancedMesh>
     </group>
   );

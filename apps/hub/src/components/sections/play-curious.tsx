@@ -1,5 +1,6 @@
 import { PLAY_CURIOUS_URL, type PlayCuriousProject, playCuriousProjects } from "@ghom/content";
 import type { Locale } from "@ghom/core";
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { sectionCode } from "../hud/sections";
@@ -29,12 +30,12 @@ function Cover({ p, className = "" }: { p: PlayCuriousProject; className?: strin
   return (
     <div className={`relative overflow-hidden bg-black ${className}`} style={accent(p)}>
       {p.image ? (
-        // biome-ignore lint/performance/noImgElement: visuel statique déjà optimisé (webp)
-        <img
+        <Image
           src={p.image}
           alt=""
-          loading="lazy"
-          className="size-full object-cover opacity-85 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover opacity-85 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
         />
       ) : (
         <div className="grid size-full place-items-center bg-[radial-gradient(circle_at_50%_60%,color-mix(in_srgb,var(--accent)_30%,transparent),transparent_65%)]">

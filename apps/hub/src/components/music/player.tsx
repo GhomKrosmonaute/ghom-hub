@@ -1,11 +1,8 @@
 "use client";
 
-import { type Album, SOUNDCLOUD_PROFILE } from "@ghom/content";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { audio } from "./audio-state";
-
-const Visualizer = dynamic(() => import("./visualizer"), { ssr: false });
+import { type Album, fxSrc, MUSIC_BASE, SOUNDCLOUD_PROFILE, trackSrc } from "@ghom/content";
+import { useEffect, useRef, useState } from "react";
+import { audio, loadFxTrack } from "./audio-state";
 
 type Texts = {
   tracks: string;
@@ -18,173 +15,98 @@ type Texts = {
   loading: string;
   profile: string;
   albums: string;
+  seek: string;
+  album: string;
+  error: string;
 };
 
-/** Sous-ensemble utile de l'API du widget SoundCloud (w.soundcloud.com/player/api.js). */
-type Widget = {
-  bind: (event: string, cb: (e?: { currentPosition?: number }) => void) => void;
-  play: () => void;
-  pause: () => void;
-  skip: (index: number) => void;
-  load: (url: string, opts: Record<string, unknown>) => void;
-  getCurrentSoundIndex: (cb: (i: number) => void) => void;
-};
-type SCApi = {
-  Widget: ((el: HTMLIFrameElement) => Widget) & { Events: Record<string, string> };
-};
-declare global {
-  interface Window {
-    SC?: SCApi;
-  }
-}
-
-const API = "https://w.soundcloud.com/player/api.js";
-const widgetSrc = (album: Album) =>
-  `https://w.soundcloud.com/player/?url=${encodeURIComponent(
-    `https://api.soundcloud.com/playlists/${album.id}`,
-  )}&color=%23ff2fd6&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`;
-
-function loadApi(): Promise<SCApi> {
-  if (window.SC) return Promise.resolve(window.SC);
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${API}"]`);
-    const s = existing ?? document.createElement("script");
-    s.addEventListener("load", () => (window.SC ? resolve(window.SC) : reject()));
-    s.addEventListener("error", () => reject());
-    if (!existing) {
-      s.src = API;
-      s.async = true;
-      document.head.appendChild(s);
-    }
-  });
-}
+const BASE = process.env.NEXT_PUBLIC_MUSIC_BASE || MUSIC_BASE;
 
 const mmss = (ms: number) => {
-  const s = Math.round(ms / 1000);
+  const s = Math.max(0, Math.round(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-/** Lecteur des albums : widget SoundCloud officiel (barre compacte) piloté par une interface maison. */
+/**
+ * Lecteur maison : un seul élément <audio> branché sur un analyseur Web Audio, que la scène 3D
+ * du fond lit à chaque image (vitesses, épaisseurs, couleurs). Le contexte audio naît au premier
+ * clic (exigence des navigateurs).
+ */
 export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
-  const root = useRef<HTMLDivElement>(null);
-  const frame = useRef<HTMLIFrameElement>(null);
-  const widget = useRef<Widget | null>(null);
-  const pending = useRef<number | null>(null);
+  const el = useRef<HTMLAudioElement>(null);
+  const ctx = useRef<AudioContext | null>(null);
   const [albumIdx, setAlbumIdx] = useState(0);
   const [trackIdx, setTrackIdx] = useState(-1);
   const [playing, setPlaying] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  const [buffering, setBuffering] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [time, setTime] = useState(0);
   const album = albums[albumIdx] as Album;
-  const albumRef = useRef(album);
-  albumRef.current = album;
+  const current = trackIdx >= 0 ? album.tracks[trackIdx] : undefined;
 
-  // Le widget (et le visualiseur) ne se chargent qu'à l'approche de la section.
-  useEffect(() => {
-    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    const el = root.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setVisible(!!e?.isIntersecting), {
-      rootMargin: "300px",
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  const [armed, setArmed] = useState(false);
-  useEffect(() => {
-    if (visible) setArmed(true);
-  }, [visible]);
-
-  /** Widget prêt (premier chargement ou album changé) : joue la piste demandée entre-temps. */
-  const flush = useCallback(() => {
-    setReady(true);
-    if (pending.current !== null) {
-      widget.current?.skip(pending.current);
-      pending.current = null;
-    }
-  }, []);
-
-  const syncIndex = useCallback(() => {
-    widget.current?.getCurrentSoundIndex((i) => {
-      setTrackIdx(i);
-      audio.track = albumRef.current.tracks[i] ?? null;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!armed || !frame.current) return;
-    let cancelled = false;
-    loadApi()
-      .then((SC) => {
-        if (cancelled || !frame.current) return;
-        const w = SC.Widget(frame.current);
-        const E = SC.Widget.Events;
-        widget.current = w;
-        w.bind(E.READY as string, flush);
-        w.bind(E.PLAY as string, () => {
-          audio.playing = true;
-          audio.at = performance.now();
-          setPlaying(true);
-          syncIndex();
-        });
-        const stop = () => {
-          audio.playing = false;
-          setPlaying(false);
-        };
-        w.bind(E.PAUSE as string, stop);
-        w.bind(E.FINISH as string, stop);
-        w.bind(E.PLAY_PROGRESS as string, (e) => {
-          audio.position = e?.currentPosition ?? 0;
-          audio.at = performance.now();
-        });
-        w.bind(E.SEEK as string, (e) => {
-          audio.position = e?.currentPosition ?? 0;
-          audio.at = performance.now();
-        });
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
+  useEffect(
+    () => () => {
       audio.playing = false;
-    };
-  }, [armed, syncIndex, flush]);
+      audio.analyser = null;
+      audio.el = null;
+      audio.fx = null;
+      ctx.current?.close();
+    },
+    [],
+  );
 
-  const pickAlbum = (i: number) => {
-    if (i === albumIdx) return;
-    setAlbumIdx(i);
-    setTrackIdx(-1);
-    setPlaying(false);
-    audio.playing = false;
-    audio.track = null;
-    const a = albums[i] as Album;
-    setReady(false);
-    widget.current?.load(`https://api.soundcloud.com/playlists/${a.id}`, {
-      auto_play: false,
-      color: "#ff2fd6",
-      show_comments: false,
-      show_teaser: false,
-      visual: false,
-      callback: flush,
+  /** Branche l'analyseur (une seule fois : un élément <audio> n'a qu'une source Web Audio). */
+  const ensureGraph = () => {
+    const a = el.current;
+    if (!a) return;
+    if (ctx.current) {
+      ctx.current.resume();
+      return;
+    }
+    const ac = new AudioContext();
+    const analyser = ac.createAnalyser();
+    // 4096 points : ~11 Hz par case, assez fin pour isoler la vraie basse sans trop de latence.
+    analyser.fftSize = 4096;
+    // Lissage court pour garder l'attaque des kicks ; plage dB élargie pour que les basses
+    // d'un morceau très chargé ne saturent pas à 1 en permanence (sinon plus aucun coup ne ressort).
+    analyser.smoothingTimeConstant = 0.3;
+    analyser.minDecibels = -80;
+    analyser.maxDecibels = -10;
+    ac.createMediaElementSource(a).connect(analyser);
+    analyser.connect(ac.destination);
+    ctx.current = ac;
+    audio.analyser = analyser;
+    ac.resume();
+  };
+
+  const start = (aIdx: number, tIdx: number) => {
+    const a = el.current;
+    const tr = albums[aIdx]?.tracks[tIdx];
+    if (!a || !tr) return;
+    ensureGraph();
+    setAlbumIdx(aIdx);
+    setTrackIdx(tIdx);
+    setFailed(false);
+    setTime(0);
+    a.src = trackSrc(tr, BASE);
+    audio.el = a;
+    audio.fx = null;
+    loadFxTrack(fxSrc(tr, BASE)).then((b) => {
+      if (a.src.endsWith(`/${tr.id}.mp3`)) audio.fx = b;
     });
+    a.play().catch(() => setFailed(true));
   };
 
   const playTrack = (i: number) => {
-    const w = widget.current;
+    const a = el.current;
+    if (!a) return;
     if (i === trackIdx) {
-      if (playing) w?.pause();
-      else w?.play();
+      ensureGraph();
+      if (a.paused) a.play().catch(() => setFailed(true));
+      else a.pause();
       return;
     }
-    audio.track = album.tracks[i] ?? null;
-    audio.position = 0;
-    audio.at = performance.now();
-    setTrackIdx(i);
-    if (!w || !ready) {
-      pending.current = i;
-      return;
-    }
-    w.skip(i);
+    start(albumIdx, i);
   };
 
   const step = (d: number) => {
@@ -192,74 +114,95 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
     playTrack(((trackIdx < 0 ? 0 : trackIdx + d) + n) % n);
   };
 
-  const current = trackIdx >= 0 ? album.tracks[trackIdx] : undefined;
+  const pickAlbum = (i: number) => {
+    if (i === albumIdx) return;
+    el.current?.pause();
+    setAlbumIdx(i);
+    setTrackIdx(-1);
+    setTime(0);
+  };
+
+  const seek = (rel: number) => {
+    const a = el.current;
+    if (!a || !current) return;
+    a.currentTime = (rel * current.duration) / 1000;
+    setTime(rel * current.duration);
+  };
+
+  const onEnded = () => {
+    // Enchaîne la piste suivante de l'album, s'arrête à la fin.
+    if (trackIdx + 1 < album.tracks.length) start(albumIdx, trackIdx + 1);
+  };
+
+  const progress = current ? Math.min(time / current.duration, 1) : 0;
+  const status = failed
+    ? t.error
+    : buffering
+      ? t.loading
+      : playing
+        ? t.nowPlaying
+        : current
+          ? t.pause
+          : t.idle;
 
   return (
-    <div ref={root} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      {/* Visualiseur */}
-      <div className="cyber-clip relative flex min-h-80 flex-col overflow-hidden border border-white/5 bg-[#05060b]/80 backdrop-blur-md lg:min-h-[30rem]">
-        <div className="absolute inset-0">
-          {armed && <Visualizer reduced={reduced} active={visible} />}
-        </div>
-        <div className="pointer-events-none relative mt-auto bg-gradient-to-t from-[#05060b] via-[#05060b]/80 to-transparent p-5 pt-16">
-          <p className="hud-label flex items-center gap-2 text-neon-2">
-            <span
-              className={`size-1.5 rounded-full ${playing ? "animate-blink bg-neon-2" : "bg-white/30"}`}
-            />
-            {current ? t.nowPlaying : armed && !ready ? t.loading : t.idle}
-          </p>
-          {current && (
-            <p className="mt-1 truncate font-display text-xl font-bold uppercase">
-              {current.title}
-              <span className="ml-2 font-mono text-xs font-normal normal-case text-muted-foreground">
-                {album.title}
-              </span>
-            </p>
-          )}
-        </div>
-      </div>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      {/* biome-ignore lint/a11y/useMediaCaption: pistes musicales instrumentales */}
+      <audio
+        ref={el}
+        crossOrigin="anonymous"
+        preload="none"
+        onPlay={() => {
+          audio.playing = true;
+          setPlaying(true);
+        }}
+        onPause={() => {
+          audio.playing = false;
+          setPlaying(false);
+        }}
+        onWaiting={() => setBuffering(true)}
+        onPlaying={() => setBuffering(false)}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime * 1000)}
+        onEnded={onEnded}
+        onError={() => {
+          setFailed(true);
+          setBuffering(false);
+        }}
+      />
 
-      {/* Albums + pistes */}
+      {/* Platine : pochette de l'album en cours, transport et progression. */}
       <div className="cyber-clip flex flex-col border border-white/5 bg-[#05060b]/80 p-5 backdrop-blur-md">
-        <p className="hud-label mb-3">{t.albums}</p>
-        <div className="grid grid-cols-4 gap-2">
-          {albums.map((a, i) => (
-            <button
-              key={a.id}
-              type="button"
-              onClick={() => pickAlbum(i)}
-              aria-pressed={i === albumIdx}
-              className={`group relative overflow-hidden border text-left transition ${
-                i === albumIdx
-                  ? "border-neon-2 shadow-[0_0_12px_-2px_var(--neon-2)]"
-                  : "border-white/10 opacity-60 hover:opacity-100"
-              }`}
-            >
-              {/* biome-ignore lint/performance/noImgElement: pochette servie par SoundCloud */}
-              <img
-                src={a.artwork}
-                alt=""
-                loading="lazy"
-                className="aspect-square w-full object-cover"
-              />
-              <span className="sr-only">{a.title}</span>
-            </button>
-          ))}
+        <p className="hud-label flex items-center gap-2 text-neon-2">
+          <span
+            className={`size-1.5 shrink-0 rounded-full ${playing ? "animate-blink bg-neon-2" : "bg-white/30"}`}
+          />
+          {status}
+        </p>
+
+        <div className="relative mt-4 aspect-square overflow-hidden border border-white/10 lg:aspect-auto lg:min-h-72 lg:flex-1">
+          {/* biome-ignore lint/performance/noImgElement: pochette servie par SoundCloud */}
+          <img
+            src={album.artwork}
+            alt=""
+            className={`absolute inset-0 size-full object-cover transition duration-700 ${playing ? "scale-[1.03]" : ""}`}
+          />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#05060b] via-[#05060b]/85 to-transparent p-4 pt-16">
+            <p className="truncate font-display text-3xl font-black uppercase leading-none">
+              {current?.title ?? album.title}
+            </p>
+            <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground">
+              {current ? `${album.title} · ` : ""}
+              {album.year} · {album.genre}
+            </p>
+          </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-display text-2xl font-bold uppercase">{album.title}</h3>
-          <span className="font-mono text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground">
-            {album.year} · {album.genre} · {album.tracks.length} {t.tracks}
-          </span>
-        </div>
-
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <button
             type="button"
             onClick={() => step(-1)}
             aria-label={t.prev}
-            className="grid size-9 place-items-center border border-white/10 font-mono text-sm hover:border-neon-2 hover:text-neon-2"
+            className="grid size-10 place-items-center border border-white/10 font-mono text-sm hover:border-neon-2 hover:text-neon-2"
           >
             ◂◂
           </button>
@@ -267,7 +210,7 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
             type="button"
             onClick={() => playTrack(Math.max(trackIdx, 0))}
             aria-label={playing ? t.pause : t.play}
-            className="grid h-9 flex-1 place-items-center border border-neon-2/60 bg-neon-2/10 font-mono text-xs uppercase tracking-[0.25em] text-neon-2 hover:bg-neon-2/20"
+            className="grid h-10 flex-1 place-items-center border border-neon-2/60 bg-neon-2/10 font-mono text-xs uppercase tracking-[0.25em] text-neon-2 hover:bg-neon-2/20"
           >
             {playing ? `❚❚ ${t.pause}` : `▶ ${t.play}`}
           </button>
@@ -275,13 +218,92 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
             type="button"
             onClick={() => step(1)}
             aria-label={t.next}
-            className="grid size-9 place-items-center border border-white/10 font-mono text-sm hover:border-neon-2 hover:text-neon-2"
+            className="grid size-10 place-items-center border border-white/10 font-mono text-sm hover:border-neon-2 hover:text-neon-2"
           >
             ▸▸
           </button>
         </div>
 
-        <ol className="mt-3 max-h-72 flex-1 overflow-y-auto pr-1 lg:max-h-none">
+        {/* Progression : la forme d'onde de la piste, cliquable pour se déplacer. */}
+        <div className="mt-3 flex items-center gap-3 font-mono text-[0.65rem] text-muted-foreground">
+          <span className="w-9 text-right">{mmss(time)}</span>
+          <input
+            type="range"
+            min={0}
+            max={1000}
+            value={Math.round(progress * 1000)}
+            disabled={!current}
+            aria-label={t.seek}
+            onChange={(e) => seek(Number(e.target.value) / 1000)}
+            className="peer sr-only"
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            disabled={!current}
+            onClick={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              seek((e.clientX - r.left) / r.width);
+            }}
+            className="flex h-8 flex-1 items-center gap-px peer-focus-visible:outline peer-focus-visible:outline-neon-2 disabled:cursor-default"
+          >
+            {(current?.wave ?? album.tracks[0]?.wave ?? []).map((v, i, arr) => (
+              <span
+                key={i}
+                className={`flex-1 ${current && i / arr.length < progress ? "bg-neon-2" : "bg-white/15"}`}
+                style={{ height: `${Math.max(v, 0.08) * 100}%` }}
+              />
+            ))}
+          </button>
+          <span className="w-9">{current ? mmss(current.duration) : "0:00"}</span>
+        </div>
+      </div>
+
+      {/* Discographie : les albums, puis les pistes de l'album choisi. */}
+      <div className="cyber-clip flex flex-col border border-white/5 bg-[#05060b]/80 p-5 backdrop-blur-md">
+        <p className="hud-label mb-3">{t.albums}</p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {albums.map((a, i) => {
+            const on = i === albumIdx;
+            return (
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => pickAlbum(i)}
+                aria-pressed={on}
+                className={`flex items-center gap-3 border p-1.5 pr-3 text-left transition ${
+                  on
+                    ? "border-neon-2 bg-neon-2/10 shadow-[0_0_12px_-4px_var(--neon-2)]"
+                    : "border-white/10 opacity-70 hover:opacity-100"
+                }`}
+              >
+                {/* biome-ignore lint/performance/noImgElement: pochette servie par SoundCloud */}
+                <img
+                  src={a.artwork}
+                  alt=""
+                  loading="lazy"
+                  className="size-12 shrink-0 object-cover"
+                />
+                <span className="min-w-0">
+                  <span
+                    className={`block truncate font-display text-base font-bold uppercase ${on ? "text-neon-2" : ""}`}
+                  >
+                    {a.title}
+                  </span>
+                  <span className="block truncate font-mono text-[0.6rem] uppercase tracking-[0.15em] text-muted-foreground">
+                    {a.year} · {a.genre}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="hud-label mt-5 mb-1">
+          {album.title} · {album.tracks.length} {t.tracks}
+        </p>
+        <ol className="max-h-96 flex-1 overflow-y-auto pr-1 lg:max-h-none">
           {album.tracks.map((tr, i) => {
             const on = i === trackIdx;
             return (
@@ -306,27 +328,24 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
           })}
         </ol>
 
-        {/* Widget officiel : barre compacte, gardée visible pour l'attribution SoundCloud. */}
-        <div className="mt-4 opacity-70 transition hover:opacity-100">
-          {armed && (
-            <iframe
-              ref={frame}
-              title={`SoundCloud · ${album.title}`}
-              src={widgetSrc(albums[0] as Album)}
-              allow="autoplay; encrypted-media"
-              className="h-[20px] w-full border-0"
-              style={{ colorScheme: "normal" }}
-            />
-          )}
+        <div className="mt-4 flex flex-wrap justify-between gap-3 font-mono text-[0.65rem] uppercase tracking-[0.2em]">
+          <a
+            href={album.url}
+            target="_blank"
+            rel="noopener"
+            className="text-foreground/60 hover:text-foreground"
+          >
+            {t.album} ▸
+          </a>
+          <a
+            href={SOUNDCLOUD_PROFILE}
+            target="_blank"
+            rel="noopener"
+            className="text-neon-2 hover:underline"
+          >
+            {t.profile}
+          </a>
         </div>
-        <a
-          href={SOUNDCLOUD_PROFILE}
-          target="_blank"
-          rel="noopener"
-          className="mt-3 self-end font-mono text-[0.65rem] uppercase tracking-[0.2em] text-neon-2 hover:underline"
-        >
-          {t.profile}
-        </a>
       </div>
     </div>
   );

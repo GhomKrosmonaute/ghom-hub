@@ -211,6 +211,9 @@ export const fr = {
     loading: "Connexion au flux…",
     profile: "Écouter sur SoundCloud ▸",
     albums: "Albums",
+    seek: "Position dans la piste",
+    album: "Album sur SoundCloud",
+    error: "Lecture impossible pour le moment.",
   },
   comms: {
     kicker: "Canal chiffré · Liaison montante",

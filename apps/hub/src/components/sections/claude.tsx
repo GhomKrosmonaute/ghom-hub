@@ -1,4 +1,5 @@
 import { claudeBuilds, SATANE_GHOM } from "@ghom/content";
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { getYoutubeStats } from "@/lib/youtube";
@@ -114,11 +115,11 @@ export async function Claude() {
                   rel="noopener"
                   className="group flex gap-3 py-3"
                 >
-                  {/* biome-ignore lint/performance/noImgElement: miniature YouTube distante */}
-                  <img
+                  <Image
                     src={`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`}
                     alt=""
-                    loading="lazy"
+                    width={320}
+                    height={180}
                     className="aspect-video w-28 shrink-0 object-cover opacity-80 transition group-hover:opacity-100"
                   />
                   <span className="flex min-w-0 flex-col gap-1">

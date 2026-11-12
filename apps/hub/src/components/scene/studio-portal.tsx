@@ -9,14 +9,16 @@ import { rig } from "./rig";
 export function StudioPortal() {
   const ref = useRef<Group>(null);
 
-  useFrame((state, dt) => {
+  useFrame((_, dt) => {
     const g = ref.current;
     if (!g) return;
-    const t = state.clock.elapsedTime;
+    // Horloge musicale : rotation et battement du cœur suivent les basses.
+    const t = rig.time;
+    const spin = dt * (1 + rig.bass * 2.5);
     const [outer, inner, core] = g.children;
-    if (outer) outer.rotation.z += dt * 0.15;
-    if (inner) inner.rotation.z -= dt * (0.4 + rig.shock * 3);
-    if (core) core.scale.setScalar(1 + Math.sin(t * 3) * 0.06);
+    if (outer) outer.rotation.z += spin * 0.15;
+    if (inner) inner.rotation.z -= spin * (0.4 + rig.shock * 3);
+    if (core) core.scale.setScalar(1 + Math.sin(t * 3) * 0.06 + rig.bass * 0.08);
     // Le portail "s'allume" quand on approche de la section studio
     const near = Math.min(1, Math.max(0, (rig.scroll - 0.5) / 0.3));
     g.scale.setScalar(0.7 + near * 0.5);

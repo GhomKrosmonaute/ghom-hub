@@ -12,6 +12,12 @@ const config: NextConfig = {
   serverExternalPackages: ["pg", "@prisma/adapter-pg"],
   reactStrictMode: true,
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" },
+      { protocol: "https", hostname: "nobrainnogame.ghom.fr", pathname: "/covers/**" },
+    ],
+  },
   turbopack: { root },
 };
 
