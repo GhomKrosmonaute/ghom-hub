@@ -60,53 +60,97 @@ export const defaultProfile: ProfileData = {
   ],
   loadout: [
     "Bun",
+    "Node.js",
     "Next.js",
+    "React",
     "Turbo",
     "Prisma",
     "PostgreSQL",
     "three.js",
+    "PixiJS",
+    "discord.js",
     "Tailwind",
     "Godot",
     "Docker",
     "Linux",
   ],
   links: [
-    { label: "GitHub", href: "https://github.com/", code: "GH" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/", code: "IN" },
+    { label: "GitHub", href: "https://github.com/GhomKrosmonaute", code: "GH" },
+    {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/camille-abella-a99950176/",
+      code: "IN",
+    },
+    { label: "Malt", href: "https://www.malt.fr/profile/camilleabella", code: "MLT" },
+    { label: "Discord", href: "https://discord.gg/kYxDWWQJ8q", code: "DC" },
     { label: "E-mail", href: "mailto:camille.abella@proton.me", code: "@" },
     { label: "Buy me a coffee", href: "https://buymeacoffee.com/ghom", code: "¤" },
   ],
   texts: {
     fr: {
       role: "Dev full-stack & game dev",
-      location: "France · UTC+1",
+      location: "Perpignan, France · UTC+1",
       tagline:
         "Je construis des interfaces qui se pilotent, des outils qui servent et des jeux qui font travailler le cerveau.",
       bio: [
         "Développement web de bout en bout : du schéma de base de données jusqu'au dernier pixel animé. J'aime les interfaces qui ont du caractère et les architectures qui restent simples.",
+        "Formé au développement web à Perpignan, j'ai passé cinq ans chez PlayCurious, un studio de serious games (CRISPR Crunch, Edenred Boat Quest, RedMetrics), avant de me lancer en freelance en 2023.",
         "En parallèle, je fais tourner No Brain No Game, un petit studio de jeux tactiques et stratégiques jouables directement dans le navigateur.",
       ],
       logbook: [
         { year: "2026", entry: "Mise en service de ghom.fr et du portail No Brain No Game." },
-        { year: "2025", entry: "Création du studio No Brain No Game." },
-        { year: "2023", entry: "Premiers projets full-stack en production." },
-        { year: "20XX", entry: "Premier « Hello world ». Le début des ennuis." },
+        {
+          year: "2023",
+          entry:
+            "Lancement en freelance : développement web et jeu vidéo, full-stack JS. Naissance de No Brain No Game.",
+        },
+        {
+          year: "2020",
+          entry:
+            "Bot.ts, mon framework discord.js en TypeScript, devient mon projet open source le plus suivi.",
+        },
+        {
+          year: "2019",
+          entry:
+            "Formations web à l'Idem et à l'École Régionale du Numérique ; 3ᵉ place au Startup Weekend Perpignan.",
+        },
+        {
+          year: "2017",
+          entry: "Premiers pas sérieux dans le développement web. Le début des ennuis.",
+        },
       ],
     },
     en: {
       role: "Full-stack & game developer",
-      location: "France · UTC+1",
+      location: "Perpignan, France · UTC+1",
       tagline:
         "I build interfaces you can pilot, tools that get the job done and games that make your brain work.",
       bio: [
         "End-to-end web development: from the database schema to the last animated pixel. I like interfaces with character and architectures that stay simple.",
+        "Trained as a web developer in Perpignan, I spent five years at PlayCurious, a serious games studio (CRISPR Crunch, Edenred Boat Quest, RedMetrics), before going freelance in 2023.",
         "On the side, I run No Brain No Game, a small studio making tactical and strategy games you play right in the browser.",
       ],
       logbook: [
         { year: "2026", entry: "ghom.fr and the No Brain No Game portal go live." },
-        { year: "2025", entry: "No Brain No Game studio founded." },
-        { year: "2023", entry: "First full-stack projects in production." },
-        { year: "20XX", entry: "First “Hello world”. That's when the trouble started." },
+        {
+          year: "2023",
+          entry:
+            "Went freelance: web and game development, full-stack JS. No Brain No Game is born.",
+        },
+        {
+          year: "2020",
+          entry:
+            "Bot.ts, my TypeScript discord.js framework, becomes my most-followed open source project.",
+        },
+        {
+          year: "2019",
+          entry:
+            "Web training at Idem and at the École Régionale du Numérique; 3rd place at Startup Weekend Perpignan.",
+        },
+        {
+          year: "2017",
+          entry: "First serious steps in web development. That's when the trouble started.",
+        },
       ],
     },
   },
