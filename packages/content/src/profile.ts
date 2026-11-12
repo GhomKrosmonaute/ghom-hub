@@ -125,6 +125,11 @@ export const defaultProfile: ProfileData = {
             "Formations web à l'Idem et à l'École Régionale du Numérique ; 3ᵉ place au Startup Weekend Perpignan.",
         },
         {
+          year: "2018",
+          entry:
+            "Lancement des Laboratoires JS, communauté Discord d'entraide pour apprendre le JavaScript.",
+        },
+        {
           year: "2017",
           entry: "Premiers pas sérieux dans le développement web. Le début des ennuis.",
         },
@@ -163,6 +168,11 @@ export const defaultProfile: ProfileData = {
           year: "2019",
           entry:
             "Web training at Idem and at the École Régionale du Numérique; 3rd place at Startup Weekend Perpignan.",
+        },
+        {
+          year: "2018",
+          entry:
+            "Launch of Les Laboratoires JS, a Discord community where people help each other learn JavaScript.",
         },
         {
           year: "2017",
