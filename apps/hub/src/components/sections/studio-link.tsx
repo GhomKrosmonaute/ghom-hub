@@ -2,6 +2,7 @@ import { GlitchText } from "@ghom/ui/cyber/glitch-text";
 import { Ticker } from "@ghom/ui/cyber/ticker";
 import { getDictionary } from "@/i18n/server";
 import type { ProjectView } from "@/lib/projects";
+import { sectionCode } from "../hud/sections";
 import { SectionHeader } from "./section-header";
 import { StudioCta } from "./studio-cta";
 
@@ -22,7 +23,7 @@ export async function StudioLink({
       className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40"
       style={{ "--glow": "#c6ff00" } as React.CSSProperties}
     >
-      <SectionHeader code="03" kicker={t.studio.kicker} title={t.studio.title} />
+      <SectionHeader code={sectionCode("studio")} kicker={t.studio.kicker} title={t.studio.title} />
 
       <div className="cyber-clip relative overflow-hidden border border-[#c6ff00]/30 bg-black/80 backdrop-blur-md">
         <Ticker

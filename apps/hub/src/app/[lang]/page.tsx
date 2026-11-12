@@ -1,10 +1,13 @@
 import { getProjects } from "@ghom/db";
 import { Cockpit } from "@/components/hud/cockpit";
 import { Arsenal } from "@/components/sections/arsenal";
+import { Claude } from "@/components/sections/claude";
 import { Comms } from "@/components/sections/comms";
 import { Footer } from "@/components/sections/footer";
 import { Hero } from "@/components/sections/hero";
+import { Music } from "@/components/sections/music";
 import { Pilot } from "@/components/sections/pilot";
+import { PlayCurious } from "@/components/sections/play-curious";
 import { StudioLink } from "@/components/sections/studio-link";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { domains, STUDIO_URL, toView, withLocale } from "@/lib/projects";
@@ -39,8 +42,11 @@ export default async function HomePage() {
           ]}
         />
         <Pilot />
+        <PlayCurious />
+        <Claude />
         <Arsenal projects={projects} />
         <StudioLink games={games} studioUrl={studioUrl} />
+        <Music />
         <Comms />
       </main>
       <div className="relative z-10">

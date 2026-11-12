@@ -2,12 +2,18 @@
 export const SECTIONS = [
   { id: "cockpit", code: "00" },
   { id: "pilote", code: "01" },
-  { id: "arsenal", code: "02" },
-  { id: "studio", code: "03" },
-  { id: "comms", code: "04" },
+  { id: "playcurious", code: "02" },
+  { id: "claude", code: "03" },
+  { id: "arsenal", code: "04" },
+  { id: "studio", code: "05" },
+  { id: "musique", code: "06" },
+  { id: "comms", code: "07" },
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]["id"];
+
+/** Numéro affiché dans l'en-tête d'une section. */
+export const sectionCode = (id: SectionId) => SECTIONS.find((s) => s.id === id)?.code ?? "";
 
 export function goTo(id: string) {
   const el = document.getElementById(id);

@@ -8,6 +8,7 @@ import { Search } from "lucide-react";
 import { useDeferredValue, useMemo, useState } from "react";
 import { useI18n } from "@/i18n/client";
 import type { ProjectView } from "@/lib/projects";
+import { sectionCode } from "../hud/sections";
 import { ProductCard } from "./product-card";
 import { ProductDialog } from "./product-dialog";
 import { SectionHeader } from "./section-header";
@@ -60,7 +61,11 @@ export function Arsenal({ projects }: { projects: ProjectView[] }) {
 
   return (
     <section id="arsenal" className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40">
-      <SectionHeader code="02" kicker={t.arsenal.kicker} title={t.arsenal.title} />
+      <SectionHeader
+        code={sectionCode("arsenal")}
+        kicker={t.arsenal.kicker}
+        title={t.arsenal.title}
+      />
 
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">

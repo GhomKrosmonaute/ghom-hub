@@ -7,5 +7,8 @@ export * from "./profile";
 /** Sites dont les textes sont administrables. */
 export const SITES = ["HUB", "STUDIO"] as const;
 export type Site = (typeof SITES)[number];
+export * from "./claude";
 export * from "./cv";
 export * from "./legal";
+export * from "./music";
+export * from "./playcurious";

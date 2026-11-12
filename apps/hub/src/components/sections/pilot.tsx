@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { getGithubTelemetry } from "@/lib/github";
+import { sectionCode } from "../hud/sections";
 import { BackpackSchematic } from "./backpack-schematic";
 import { GithubTelemetry } from "./github-telemetry";
 import { Panel, SectionHeader } from "./section-header";
@@ -60,7 +61,7 @@ export async function Pilot() {
   const [profile, github] = await Promise.all([getProfile(locale), getGithubTelemetry()]);
   return (
     <section id="pilote" className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40">
-      <SectionHeader code="01" kicker={t.pilot.kicker} title={t.pilot.title} />
+      <SectionHeader code={sectionCode("pilote")} kicker={t.pilot.kicker} title={t.pilot.title} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:items-start">
         {/* Carte d'identité */}

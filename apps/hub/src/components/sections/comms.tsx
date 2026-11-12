@@ -1,5 +1,6 @@
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
+import { sectionCode } from "../hud/sections";
 import { ContactForm } from "./contact-form";
 import { Panel, SectionHeader } from "./section-header";
 
@@ -12,7 +13,7 @@ export async function Comms() {
       className="relative scroll-mt-10 px-6 py-28 md:px-28 lg:px-40"
       style={{ "--glow": "var(--neon-2)" } as React.CSSProperties}
     >
-      <SectionHeader code="04" kicker={t.comms.kicker} title={t.comms.title} />
+      <SectionHeader code={sectionCode("comms")} kicker={t.comms.kicker} title={t.comms.title} />
       <div className="grid gap-6 lg:grid-cols-[1fr_1.6fr]">
         <Panel className="p-6 md:p-8">
           <p className="hud-label text-neon-2">{t.comms.open}</p>
