@@ -2,7 +2,7 @@
 
 import { type Album, fxSrc, MUSIC_BASE, SOUNDCLOUD_PROFILE, trackSrc } from "@ghom/content";
 import { useEffect, useRef, useState } from "react";
-import { audio, loadFxTrack } from "./audio-state";
+import { audio, controls, loadFxTrack, nowPlaying } from "./audio-state";
 
 type Texts = {
   tracks: string;
@@ -51,6 +51,8 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
       audio.el = null;
       audio.fx = null;
       ctx.current?.close();
+      controls.current = null;
+      nowPlaying.set(null);
     },
     [],
   );
@@ -133,6 +135,35 @@ export function MusicPlayer({ albums, t }: { albums: Album[]; t: Texts }) {
     // Enchaîne la piste suivante de l'album, s'arrête à la fin.
     if (trackIdx + 1 < album.tracks.length) start(albumIdx, trackIdx + 1);
   };
+
+  // Mini-lecteur du HUD : commandes (toujours sur le dernier état) et instantané de lecture.
+  const latest = useRef({ playTrack, step, seek });
+  latest.current = { playTrack, step, seek };
+  useEffect(() => {
+    controls.current = {
+      toggle: () => latest.current.step(0),
+      next: () => latest.current.step(1),
+      prev: () => latest.current.step(-1),
+      seek: (rel) => latest.current.seek(rel),
+    };
+    return () => {
+      controls.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    nowPlaying.set(
+      current
+        ? {
+            title: current.title,
+            album: album.title,
+            artwork: album.artwork,
+            playing,
+            time,
+            duration: current.duration,
+          }
+        : null,
+    );
+  }, [current, album, playing, time]);
 
   const progress = current ? Math.min(time / current.duration, 1) : 0;
   const status = failed

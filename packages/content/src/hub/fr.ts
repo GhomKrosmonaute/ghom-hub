@@ -215,6 +215,9 @@ export const fr = {
     album: "Album sur SoundCloud",
     error: "Lecture impossible pour le moment.",
   },
+  miniPlayer: {
+    open: "Aller à la musique",
+  },
   comms: {
     kicker: "Canal chiffré · Liaison montante",
     title: "Comms",

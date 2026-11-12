@@ -210,6 +210,9 @@ export const en: Dictionary = {
     album: "Album on SoundCloud",
     error: "Playback unavailable right now.",
   },
+  miniPlayer: {
+    open: "Go to music",
+  },
   comms: {
     kicker: "Encrypted channel · Uplink",
     title: "Comms",

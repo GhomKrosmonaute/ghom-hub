@@ -163,3 +163,43 @@ export function readBands(dt: number): Bands {
   slow += (sub - slow) * (1 - Math.exp(-dt * 3));
   return bands;
 }
+
+/** Magasin externe pour l'UI (mini-lecteur du HUD) : instantané de la piste en cours + commandes. */
+export type NowPlaying = {
+  title: string;
+  album: string;
+  artwork: string;
+  playing: boolean;
+  /** Position et durée en ms. */
+  time: number;
+  duration: number;
+};
+
+export type PlayerControls = {
+  toggle: () => void;
+  next: () => void;
+  prev: () => void;
+  /** Position relative (0–1). */
+  seek: (rel: number) => void;
+};
+
+let snapshot: NowPlaying | null = null;
+const listeners = new Set<() => void>();
+
+export const nowPlaying = {
+  subscribe(fn: () => void) {
+    listeners.add(fn);
+    return () => {
+      listeners.delete(fn);
+    };
+  },
+  getSnapshot: () => snapshot,
+  getServerSnapshot: () => null as NowPlaying | null,
+  set(next: NowPlaying | null) {
+    snapshot = next;
+    for (const fn of listeners) fn();
+  },
+};
+
+/** Commandes enregistrées par le lecteur (null quand il est démonté). */
+export const controls: { current: PlayerControls | null } = { current: null };

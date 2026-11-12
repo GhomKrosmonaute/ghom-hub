@@ -9,6 +9,7 @@ import { cn } from "@ghom/ui/lib/utils";
 import { Command } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n/client";
+import { MiniPlayer } from "./mini-player";
 import { goTo, SECTIONS } from "./sections";
 import { useActiveSection } from "./use-active-section";
 
@@ -282,6 +283,9 @@ export function Visor({
           </span>
         </div>
       </div>
+
+      {/* Mini-lecteur : au-dessus de la barre basse (bureau) ou de la nav (mobile) */}
+      <MiniPlayer />
 
       {/* Navigation mobile */}
       <nav
