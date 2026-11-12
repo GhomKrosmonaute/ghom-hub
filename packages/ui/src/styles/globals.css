@@ -147,6 +147,15 @@
     inset 0 0 22px -8px color-mix(in oklab, var(--glow, var(--neon-1)) 50%, transparent);
 }
 
+/* Plaque sombre sous le texte clair posé sur la 3D ; une bande par ligne (inline). */
+@utility text-plate {
+  background: color-mix(in oklab, #05060b 52%, transparent);
+  backdrop-filter: blur(2px);
+  padding: 0.12em 0.4em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 @utility hud-label {
   font-family: var(--font-mono);
   font-size: 0.65rem;

@@ -155,7 +155,9 @@ export async function PlayCurious() {
       <SectionHeader code={sectionCode("playcurious")} kicker={tx.kicker} title={tx.title} />
 
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <p className="max-w-2xl text-lg leading-relaxed text-foreground/75">{tx.intro}</p>
+        <p className="max-w-2xl text-lg leading-relaxed text-foreground/75">
+          <span className="text-plate">{tx.intro}</span>
+        </p>
         <div className="flex flex-col items-end gap-1 font-mono text-xs uppercase tracking-[0.2em]">
           <span className="text-[#3dffb0]">{tx.period}</span>
           <a

@@ -28,8 +28,8 @@ export async function Hero({ stats }: { stats: { label: string; value: number }[
           duration={1100}
           className="mt-6 inline-block bg-[#05060b]/55 font-mono text-sm uppercase tracking-[0.35em] text-neon-2 backdrop-blur-[2px] md:bg-transparent md:text-base md:backdrop-blur-none"
         />
-        <p className="mt-6 max-w-xl bg-[#05060b]/55 text-lg leading-relaxed text-foreground/90 backdrop-blur-[2px] md:bg-transparent md:text-xl md:backdrop-blur-none">
-          {profile.tagline}
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-foreground/90 md:text-xl">
+          <span className="text-plate">{profile.tagline}</span>
         </p>
 
         <HeroActions />

@@ -16,7 +16,9 @@ export async function Music() {
       style={{ "--glow": "#ff2fd6" } as CSSProperties}
     >
       <SectionHeader code={sectionCode("musique")} kicker={kicker} title={title} />
-      <p className="mb-10 max-w-2xl text-lg leading-relaxed text-foreground/75">{intro}</p>
+      <p className="mb-10 max-w-2xl text-lg leading-relaxed text-foreground/75">
+        <span className="text-plate">{intro}</span>
+      </p>
       <MusicPlayer albums={albums} t={texts} />
     </section>
   );

@@ -31,7 +31,9 @@ export async function Claude() {
       style={{ "--glow": ORANGE, "--accent": ORANGE } as CSSProperties}
     >
       <SectionHeader code={sectionCode("claude")} kicker={tx.kicker} title={tx.title} />
-      <p className="mb-10 max-w-3xl text-lg leading-relaxed text-foreground/75">{tx.intro}</p>
+      <p className="mb-10 max-w-3xl text-lg leading-relaxed text-foreground/75">
+        <span className="text-plate">{tx.intro}</span>
+      </p>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <Panel className="flex flex-col gap-6 p-6 md:p-8">
