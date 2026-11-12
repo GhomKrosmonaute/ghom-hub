@@ -8,6 +8,8 @@ export const SATANE_GHOM = {
   channelId: "UCgg20wPvbiLm-OhOSjvz1_A",
   url: "https://www.youtube.com/@Satan%C3%A9Ghom",
   site: "https://ghomkrosmonaute.github.io/anti-dogmatic-resources/",
+  /** Premier commit de Ghom sur l'agent (et non la date de création de la chaîne). */
+  since: "2026-09-25",
 };
 
 export type ClaudeBuild = {

@@ -73,11 +73,9 @@ export async function Claude() {
           )}
 
           <div className="mt-auto flex flex-wrap items-center justify-between gap-3 font-mono text-xs uppercase tracking-[0.2em]">
-            {yt?.joined && (
-              <span className="text-muted-foreground">
-                {tx.since} {date.format(new Date(`${yt.joined}T00:00:00Z`))}
-              </span>
-            )}
+            <span className="text-muted-foreground">
+              {tx.since} {date.format(new Date(`${SATANE_GHOM.since}T00:00:00Z`))}
+            </span>
             <span className="flex gap-5">
               <a
                 href={SATANE_GHOM.site}

@@ -173,7 +173,7 @@ export const en: Dictionary = {
     subscribers: "Subscribers",
     views: "Views",
     videos: "Videos",
-    since: "Online since",
+    since: "In development since",
     latest: "Latest broadcasts",
     viewsShort: "views",
     channel: "YouTube channel ▸",

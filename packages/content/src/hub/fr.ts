@@ -178,7 +178,7 @@ export const fr = {
     subscribers: "Abonnés",
     views: "Vues",
     videos: "Vidéos",
-    since: "En ligne depuis",
+    since: "En développement depuis",
     latest: "Dernières diffusions",
     viewsShort: "vues",
     channel: "Chaîne YouTube ▸",
