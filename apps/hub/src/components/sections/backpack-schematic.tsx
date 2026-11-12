@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 type System = { code: string; label: string };
 /** `under` : zone qui en contient d'autres, dessinée dessous pour ne pas leur voler le survol. */
@@ -28,6 +28,8 @@ const ZONES: Zone[] = [
 /** Le sac est dessiné autour de x = 230 ; il est décalé de DX dans la vue large. */
 const DX = 70;
 const W = 600;
+/** Échelle max de la vue large : au-delà, le schéma ne grossit plus, il s'étire seulement en largeur. */
+const MAX_SCALE = 1.25;
 const TOP = 30;
 const BOTTOM = 330;
 
@@ -82,6 +84,22 @@ function Pack({ dim }: { dim: boolean }) {
 /** Schéma de sac à dos cyberpunk : chaque système pointe une zone, réaction au survol. */
 export function BackpackSchematic({ systems }: { systems: System[] }) {
   const [active, setActive] = useState<number | null>(null);
+  // Largeur du viewBox : 600 tant que l'échelle reste sous MAX_SCALE, plus large ensuite.
+  const box = useRef<HTMLDivElement>(null);
+  const [vw, setVw] = useState(W);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => {
+      const px = e?.contentRect.width ?? 0;
+      setVw(px > W * MAX_SCALE ? px / MAX_SCALE : W);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  /** Décalage qui centre le sac, et écart supplémentaire des étiquettes. */
+  const ox = (vw - W) / 2;
+  const spread = ox * 0.6;
   const uid = useId().replace(/:/g, "");
   const items = layout(systems);
   const activeZones = new Set(items.filter((it) => it.i === active).map((it) => it.zone));
@@ -158,24 +176,24 @@ export function BackpackSchematic({ systems }: { systems: System[] }) {
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: fin du survol décoratif
-    <div onMouseLeave={() => setActive(null)}>
+    <div ref={box} onMouseLeave={() => setActive(null)}>
       {/* Vue large : étiquettes reliées au sac */}
       <svg
-        viewBox={`0 0 ${W} 360`}
+        viewBox={`0 0 ${vw} 360`}
         className="hidden h-auto w-full select-none md:block"
         aria-hidden
       >
         {defs}
-        <g transform={`translate(${DX} 0)`}>
+        <g transform={`translate(${DX + ox} 0)`}>
           <Pack dim={active !== null} />
           {zones}
         </g>
         {items.map((it) => {
           const on = active === it.i;
           const dim = active !== null && !on;
-          const ax = it.zone.x + DX;
-          const elbowX = it.isLeft ? 214 : 404;
-          const textX = it.isLeft ? 204 : 414;
+          const ax = it.zone.x + DX + ox;
+          const elbowX = it.isLeft ? 214 + ox - spread : 404 + ox + spread;
+          const textX = it.isLeft ? 204 + ox - spread : 414 + ox + spread;
           const color = on ? "var(--neon-2)" : "var(--neon-1)";
           return (
             // biome-ignore lint/a11y/noStaticElementInteractions: survol décoratif, la liste accessible est rendue à part
@@ -188,7 +206,7 @@ export function BackpackSchematic({ systems }: { systems: System[] }) {
               <rect
                 x={it.isLeft ? 0 : textX - 8}
                 y={it.ly - 22}
-                width={it.isLeft ? textX + 8 : W - textX + 8}
+                width={it.isLeft ? textX + 8 : vw - textX + 8}
                 height="38"
                 fill="transparent"
               />
@@ -227,7 +245,7 @@ export function BackpackSchematic({ systems }: { systems: System[] }) {
             </g>
           );
         })}
-        <g transform={`translate(${DX} 0)`}>{items.map((it) => marker(it, false))}</g>
+        <g transform={`translate(${DX + ox} 0)`}>{items.map((it) => marker(it, false))}</g>
       </svg>
 
       {/* Vue étroite : repères numérotés + liste */}
