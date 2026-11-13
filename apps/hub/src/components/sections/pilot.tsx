@@ -1,6 +1,7 @@
 import { localizePath } from "@ghom/core";
 import { Brackets } from "@ghom/ui/cyber/brackets";
 import Link from "next/link";
+import type * as React from "react";
 import { getProfile } from "@/content/profile";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { getGithubTelemetry } from "@/lib/github";
@@ -9,49 +10,79 @@ import { BackpackSchematic } from "./backpack-schematic";
 import { GithubTelemetry } from "./github-telemetry";
 import { Panel, SectionHeader } from "./section-header";
 
-/** Emblème du pilote : un casque de mecha stylisé en SVG. */
-function HelmetEmblem() {
+/** Emblème du pilote : monogramme « G » anguleux dans un réticule de visée. */
+function PilotEmblem() {
+  const ticks = Array.from({ length: 24 }, (_, i) => i * 15);
+  const spin =
+    "origin-center [transform-box:fill-box] motion-safe:animate-[spin_var(--d)_linear_infinite]";
   return (
     <svg viewBox="0 0 200 200" className="h-full w-full" aria-hidden>
       <defs>
-        <linearGradient id="visor" x1="0" x2="1">
+        <linearGradient id="emblem-g" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="var(--neon-1)" />
           <stop offset="1" stopColor="var(--neon-2)" />
         </linearGradient>
+        <clipPath id="emblem-hex">
+          <path d="M100 30 160.6 65v70L100 170 39.4 135V65Z" />
+        </clipPath>
       </defs>
-      <g fill="none" stroke="var(--neon-1)" strokeWidth="1.5">
-        <path d="M100 18 152 40 170 92 158 150 128 178H72L42 150 30 92 48 40Z" fill="#05060b" />
-        <path d="M100 18 100 50M48 40 72 60M152 40 128 60" opacity=".5" />
-        <path d="M58 150 80 132h40l22 18M86 164h28" opacity=".7" />
-        <path d="M30 92h-10l-6 22 14 10M170 92h10l6 22-14 10" />
+      {/* Couronne graduée, rotation lente */}
+      <g className={spin} style={{ "--d": "60s" } as React.CSSProperties}>
+        {ticks.map((a) => (
+          <line
+            key={a}
+            x1="100"
+            y1="4"
+            x2="100"
+            y2={a % 90 === 0 ? 14 : 9}
+            stroke="var(--neon-1)"
+            strokeWidth={a % 90 === 0 ? 2 : 1}
+            opacity={a % 90 === 0 ? 0.9 : 0.4}
+            transform={`rotate(${a} 100 100)`}
+          />
+        ))}
       </g>
-      <path d="M50 86 72 70h56l22 16-8 22H58Z" fill="url(#visor)" opacity=".9">
-        <animate
-          attributeName="opacity"
-          values=".9;.55;.9;.9;.4;.9"
-          dur="4s"
-          repeatCount="indefinite"
-        />
-      </path>
-      <path d="M62 84h76" stroke="#fff" strokeWidth="1" opacity=".6" />
-      <circle
-        cx="100"
-        cy="100"
-        r="94"
+      {/* Arcs de verrouillage, rotation inverse */}
+      <g
+        className={`${spin} [animation-direction:reverse]`}
+        style={{ "--d": "24s" } as React.CSSProperties}
+        fill="none"
+        stroke="var(--neon-2)"
+        strokeWidth="1.5"
+      >
+        <path d="M100 18a82 82 0 0 1 58 24" />
+        <path d="M100 182a82 82 0 0 1-58-24" />
+      </g>
+      {/* Hexagone */}
+      <path
+        d="M100 30 160.6 65v70L100 170 39.4 135V65Z"
+        fill="#05060b"
+        stroke="var(--neon-1)"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M100 40 152 70v60l-52 30-52-30V70Z"
         fill="none"
         stroke="var(--neon-1)"
-        strokeDasharray="2 6"
+        strokeDasharray="2 4"
         opacity=".35"
-      >
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          from="0 100 100"
-          to="360 100 100"
-          dur="40s"
-          repeatCount="indefinite"
-        />
-      </circle>
+      />
+      {/* Monogramme */}
+      <path
+        d="M128 76H84L72 88v24l12 12h32l12-12v-14h-26"
+        fill="none"
+        stroke="url(#emblem-g)"
+        strokeWidth="11"
+        strokeLinejoin="miter"
+        transform="translate(100 100) scale(.85) translate(-100 -100)"
+        className="drop-shadow-[0_0_6px_var(--neon-1)]"
+      />
+      {/* Balayage */}
+      <g clipPath="url(#emblem-hex)">
+        <rect x="30" y="30" width="140" height="2" fill="var(--neon-1)" opacity=".5">
+          <animate attributeName="y" values="30;168;30" dur="5s" repeatCount="indefinite" />
+        </rect>
+      </g>
     </svg>
   );
 }
@@ -68,7 +99,7 @@ export async function Pilot() {
         <Panel className="min-w-0 p-6 lg:sticky lg:top-24">
           <Brackets inset={8} />
           <div className="mx-auto aspect-square w-48">
-            <HelmetEmblem />
+            <PilotEmblem />
           </div>
           <div className="mt-4 text-center">
             <p className="font-display text-4xl font-black tracking-wider neon-text">
@@ -80,10 +111,10 @@ export async function Pilot() {
           </div>
           <dl className="mt-6 grid grid-cols-2 gap-px bg-white/5 font-mono text-[0.7rem] uppercase tracking-[0.15em]">
             {[
-              [t.pilot.unit, profile.unit],
+              [t.pilot.activity, t.pilot.activityValue],
               [t.pilot.base, profile.location],
               [t.pilot.status, t.pilot.statusValue],
-              [t.pilot.clearance, t.pilot.clearanceValue],
+              [t.pilot.experience, t.pilot.experienceValue],
             ].map(([k, v]) => (
               <div key={k} className="bg-[#05060b] p-3">
                 <dt className="text-muted-foreground">{k}</dt>
