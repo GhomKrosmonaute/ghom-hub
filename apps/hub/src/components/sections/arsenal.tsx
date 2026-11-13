@@ -109,9 +109,11 @@ export function Arsenal({ projects }: { projects: ProjectView[] }) {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((p, i) => (
+            // fill-mode-backwards : une fois l'entrée finie, plus de filter/transform résiduel,
+            // sinon le conteneur devient une « backdrop root » et coupe le flou des cartes.
             <div
               key={p.id}
-              className="h-full animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-500"
+              className="h-full animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards duration-500"
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <ProductCard project={p} onInspect={() => setInspected(p)} />

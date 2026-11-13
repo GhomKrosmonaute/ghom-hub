@@ -59,8 +59,10 @@ export function ProductCard({
         onPointerLeave={onLeave}
         style={{ "--glow": project.accent } as React.CSSProperties}
         className={cn(
-          "group/card cyber-clip relative flex h-full w-full flex-col overflow-hidden border border-white/5 bg-[#05060b]/85 text-left backdrop-blur-md",
-          "[transform:rotateX(var(--rx,0))_rotateY(var(--ry,0))] transition-[transform,box-shadow,border-color] duration-300 ease-out will-change-transform",
+          "group/card cyber-clip relative flex h-full w-full flex-col overflow-hidden border border-white/5 bg-[#05060b]/95 text-left backdrop-blur-md",
+          // Inclinaison seulement pendant le survol : après un scroll sans mouvement de souris,
+          // pointerleave ne part pas et la carte restait penchée, décalée et sans flou (Firefox).
+          "transition-[transform,box-shadow,border-color] duration-300 ease-out hover:[transform:rotateX(var(--rx,0))_rotateY(var(--ry,0))]",
           "hover:border-[var(--glow)]/60 hover:shadow-[0_0_40px_-12px_var(--glow)] focus-visible:border-[var(--glow)]",
           archived && "opacity-60 grayscale-[0.6] hover:grayscale-0",
         )}
