@@ -70,8 +70,9 @@ export function NeonFloor() {
     // Musique : défilement à l'horloge musicale, lignes épaissies par les basses ; la couleur
     // glisse vers le magenta plutôt que de monter en luminosité (pas de flash blanc).
     u.uTime!.value = rig.time;
-    u.uWidth!.value = 1 + rig.bass * 1.1 + rig.punch * 1.8;
-    u.uGain!.value = 1 + Math.min(rig.bass * 0.6 + rig.punch * 0.9, 1.3);
+    u.uWidth!.value = 1 + rig.bass * 1.1 + rig.punch * 1.8 + rig.snare * 0.6;
+    u.uGain!.value =
+      1 + Math.min(rig.bass * 0.6 + rig.punch * 0.9 + rig.high * 0.3 + rig.tick * 0.3, 1.3);
     // Vire au vert acide en approchant du portail studio ; les médiums tirent vers le magenta.
     const t = Math.min(1, Math.max(0, (rig.scroll - 0.55) / 0.25));
     u.uColor!.value.copy(

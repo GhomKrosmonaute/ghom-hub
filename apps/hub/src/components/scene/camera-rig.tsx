@@ -30,7 +30,8 @@ export function CameraRig() {
     prevKick.current = b.kick;
     if (newHit) rig.busy += 0.3;
     rig.busy *= Math.exp(-dt * 0.4);
-    const calm = 1 / (1 + rig.busy * 1.2);
+    // Plancher : même un morceau très chargé garde au moins 55 % de la lumière continue.
+    const calm = Math.max(0.55, 1 / (1 + rig.busy * 1.2));
     rig.bass = damp(rig.bass, b.sub * calm, 6, dt);
     rig.mid = damp(rig.mid, b.mid, 8, dt);
     rig.high = damp(rig.high, b.high, 10, dt);

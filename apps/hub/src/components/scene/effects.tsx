@@ -30,14 +30,16 @@ export function Effects() {
 
   // L'aberration chromatique réagit à la vitesse de scroll : le "glitch" vient du pilotage.
   useFrame(() => {
-    const s = 0.0006 + rig.shock * 0.008 + rig.punch * 0.005 + rig.tick * 0.0012;
+    const s =
+      0.0006 + rig.shock * 0.008 + rig.punch * 0.005 + rig.tick * 0.002 + rig.snare * 0.0015;
     ca.current?.offset.set(s + pointer.x * 0.0004, s * 0.6);
     // Musique : un bloom qui monte doucement sur les basses, plafonné pour éviter les flashs blancs.
     if (bloom.current)
-      bloom.current.intensity = 1.25 + Math.min(rig.bass * 1.1 + rig.punch * 1.2, 2.2);
+      bloom.current.intensity =
+        1.25 + Math.min(rig.bass * 1.1 + rig.punch * 1.2 + rig.mid * 0.4 + rig.snare * 0.35, 2.2);
     // Aigus : le grain de l'image monte avec les cymbales et crépite sur les charlestons.
     if (noise.current)
-      noise.current.blendMode.opacity.value = 0.35 + rig.high * 0.2 + rig.tick * 0.25;
+      noise.current.blendMode.opacity.value = 0.35 + rig.high * 0.3 + rig.tick * 0.3;
   });
 
   return (

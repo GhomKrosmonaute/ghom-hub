@@ -138,7 +138,7 @@ export async function Claude() {
         </Panel>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr_0.9fr]">
+      <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {claudeBuilds.map((b) => {
           const x = b.texts[locale];
           return (
@@ -169,27 +169,29 @@ export async function Claude() {
                     rel="noopener"
                     className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--accent)] hover:underline"
                   >
-                    GitHub ▸
+                    {b.linkLabel ?? "GitHub"} ▸
                   </a>
                 )}
               </div>
             </Panel>
           );
         })}
-        <Panel className="flex flex-col gap-3 p-6">
-          <p className="hud-label">{tx.skills}</p>
-          <ul className="flex flex-wrap gap-2">
-            {tx.skillList.map((s) => (
-              <li
-                key={s}
-                className="border border-[var(--accent)]/40 bg-[var(--accent)]/[0.07] px-2 py-1 font-mono text-xs text-foreground/85"
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
-        </Panel>
       </div>
+
+      {/* Bandeau de maîtrise, sous les projets */}
+      <Panel className="mt-6 flex flex-col gap-3 p-6 md:flex-row md:items-center md:gap-6">
+        <p className="hud-label shrink-0">{tx.skills}</p>
+        <ul className="flex flex-wrap gap-2">
+          {tx.skillList.map((s) => (
+            <li
+              key={s}
+              className="border border-[var(--accent)]/40 bg-[var(--accent)]/[0.07] px-2 py-1 font-mono text-xs text-foreground/85"
+            >
+              {s}
+            </li>
+          ))}
+        </ul>
+      </Panel>
     </section>
   );
 }

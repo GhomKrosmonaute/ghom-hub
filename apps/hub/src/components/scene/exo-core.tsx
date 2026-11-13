@@ -85,7 +85,13 @@ export function ExoCore() {
 
     fresnel.uniforms.uTime!.value = t;
     fresnel.uniforms.uPulse!.value =
-      0.5 + 0.5 * Math.sin(t * 2.2) + rig.shock + rig.bass * 1.8 + rig.punch * 1.5;
+      0.5 +
+      0.5 * Math.sin(t * 2.2) +
+      rig.shock +
+      rig.bass * 1.8 +
+      rig.punch * 1.5 +
+      rig.high * 0.7 +
+      rig.tick * 0.6;
 
     g.rotation.y = damp(g.rotation.y, pointer.x * 0.6, 3, dt);
     g.rotation.x = damp(g.rotation.x, -pointer.y * 0.4, 3, dt);

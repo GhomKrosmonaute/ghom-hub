@@ -16,6 +16,8 @@ export type ClaudeBuild = {
   slug: string;
   name: string;
   href?: string;
+  /** Libellé du lien (par défaut : « GitHub »). */
+  linkLabel?: string;
   tags: string[];
   texts: Record<Locale, { kicker: string; body: string }>;
 };
@@ -50,6 +52,23 @@ export const claudeBuilds: ClaudeBuild[] = [
       en: {
         kicker: "Open source Claude Code plugin",
         body: "Cuts Claude Code token usage: a short main context, trivial work delegated to Haiku and simple work to Sonnet, screenshots and long outputs kept out of the context, and a report to measure the gain.",
+      },
+    },
+  },
+  {
+    slug: "ghombudget",
+    name: "GhomBudget",
+    href: "https://budget.ghom.fr",
+    linkLabel: "budget.ghom.fr",
+    tags: ["React", "Tauri", "Open banking"],
+    texts: {
+      fr: {
+        kicker: "Gestion de budget, construite avec Claude Code",
+        body: "Une app de budget personnel sur le web, le bureau et Android : synchronisation bancaire, catégorisation proposée puis confirmée, détection des salaires et des récurrences, suivi des dettes et projection du solde. Verrouillage biométrique inclus.",
+      },
+      en: {
+        kicker: "Budgeting app, built with Claude Code",
+        body: "A personal budgeting app for web, desktop and Android: bank sync, categories suggested then confirmed, salary and recurring-payment detection, debt tracking and balance projection. Biometric lock included.",
       },
     },
   },

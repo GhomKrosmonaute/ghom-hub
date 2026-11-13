@@ -36,7 +36,13 @@ export function City({ count = 240 }: { count?: number }) {
   // Musique : les néons des tours respirent avec les basses, s'allument sur la caisse claire (teinte multipliée, jamais blanchie).
   useFrame(() => {
     stripsMat.current?.color.setScalar(
-      0.7 + rig.bass * 1.3 + rig.punch * 1.2 + rig.mid * 0.5 + rig.snare * 0.9,
+      0.7 +
+        rig.bass * 1.3 +
+        rig.punch * 1.2 +
+        rig.mid * 0.7 +
+        rig.snare * 0.9 +
+        rig.high * 0.4 +
+        rig.tick * 0.5,
     );
   });
 

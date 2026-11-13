@@ -90,6 +90,12 @@ export type Bands = {
   tick: number;
 };
 
+/**
+ * Puissance plancher d'un coup de basse : la rareté atténue les morceaux à kick continu
+ * (psytrance, techno), mais jamais en dessous de ce seuil, pour que le visuel reste lisible.
+ */
+const MIN_HIT_POWER = 0.45;
+
 const bands: Bands = { sub: 0, bass: 0, mid: 0, high: 0, kick: 0, snare: 0, tick: 0 };
 let bins: Uint8Array<ArrayBuffer> | null = null;
 let slow = 0; // moyenne lente de la vraie basse : référence pour détecter les coups
@@ -141,7 +147,7 @@ export function readBands(dt: number): Bands {
     bands.high = at(fx.high, fx.fps, t);
     if (prevTime >= 0 && t > prevTime && t - prevTime < 0.5) {
       const k = crossed(fx.hits, prevTime, t);
-      if (k >= 0) bands.kick = Math.max(bands.kick, fx.power[k] ?? 1);
+      if (k >= 0) bands.kick = Math.max(bands.kick, MIN_HIT_POWER, fx.power[k] ?? 1);
       if (crossed(fx.snares, prevTime, t) >= 0) bands.snare = 1;
       if (crossed(fx.ticks, prevTime, t) >= 0) bands.tick = 1;
     }
