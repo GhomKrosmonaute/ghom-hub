@@ -40,7 +40,9 @@ export class FieldConflictError extends Error {
 
 function asConflict(error: unknown): never {
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-    const target = String((error.meta as { target?: unknown } | undefined)?.target ?? "");
+    // Avec l'adaptateur Neon, meta.target est souvent absent : la contrainte apparaît alors
+    // seulement dans meta (driverAdapterError) ou le message.
+    const target = `${JSON.stringify(error.meta ?? {})} ${error.message}`;
     if (target.includes("slug")) throw new FieldConflictError("slug", "Ce slug est déjà pris");
     throw new FieldConflictError("subdomain", "Ce sous-domaine est déjà utilisé");
   }
